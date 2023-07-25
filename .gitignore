@@ -1,0 +1,17 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Jobs.In.Campinas.Api/.vs/Jobs.In.Campinas.Api
+/Jobs.In.Campinas.Api/Jobs.In.Campinas.Api/bin/Debug/net7.0
+/Jobs.In.Campinas.Api/Jobs.In.Campinas.Api/obj
+/Jobs.In.Campinas.Api/.vs/ProjectEvaluation
+/Jobs.In.Campinas.Api/Api/bin/Debug
+/Jobs.In.Campinas.Api/Api/obj
+/Jobs.In.Campinas.Api/CrossCutting.Configurations/bin/Debug
+/Jobs.In.Campinas.Api/CrossCutting.Configurations/obj
+/Jobs.In.Campinas.Api/Domain/bin/Debug
+/Jobs.In.Campinas.Api/Domain/obj
+/Jobs.In.Campinas.Api/Infrastucture.Repository/bin/Debug
+/Jobs.In.Campinas.Api/Infrastucture.Repository/obj

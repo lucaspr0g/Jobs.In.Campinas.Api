@@ -15,3 +15,14 @@
 /Jobs.In.Campinas.Api/Domain/obj
 /Jobs.In.Campinas.Api/Infrastucture.Repository/bin/Debug
 /Jobs.In.Campinas.Api/Infrastucture.Repository/obj
+/Jobs.In.Campinas.Api/Api/appsettings.Development.json
+/Api/bin/Debug
+/Api/obj
+/CrossCutting.Configurations/bin/Debug
+/CrossCutting.Configurations/obj
+/Domain/bin/Debug
+/Domain/obj
+/Infrastucture.Repository/bin/Debug
+/Infrastucture.Repository/obj
+/Infrastructure.IoC/bin/Debug/net7.0
+/Infrastructure.IoC/obj

@@ -1,5 +1,4 @@
-﻿using CrossCutting.Configurations;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
 namespace Infrastructure.Repository.Repositories
@@ -8,10 +7,10 @@ namespace Infrastructure.Repository.Repositories
     {
         protected readonly IMongoCollection<Source> _collection;
 
-        public BaseRepository(IOptions<AppSettings> options, string collectionName)
+        public BaseRepository(IConfiguration configuration, string collectionName)
         {
-            var client = new MongoClient(options.Value.ConnectionString);
-            var database = client.GetDatabase(options.Value.DatabaseName);
+            var client = new MongoClient(configuration.GetConnectionString("MongoDb"));
+            var database = client.GetDatabase(configuration.GetSection("DatabaseName").Value);
 
             _collection = database.GetCollection<Source>(collectionName);
         }

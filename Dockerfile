@@ -11,7 +11,6 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["*.sln", "./"]
 COPY ["Api/Api.csproj", "Api/"]
-COPY ["CrossCutting.Configurations/CrossCutting.Configurations.csproj", "CrossCutting.Configurations/"]
 COPY ["Domain/Domain.csproj", "Domain/"]
 COPY ["Infrastructure.IoC/Infrastructure.IoC.csproj", "Infrastructure.IoC/"]
 COPY ["Infrastructure.Repository/Infrastructure.Repository.csproj", "Infrastructure.Repository/"]

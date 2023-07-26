@@ -1,12 +1,9 @@
-using CrossCutting.Configurations;
 using Infrastructure.IoC;
 using Microsoft.AspNetCore.Rewrite;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.Configure<AppSettings>
-    (builder.Configuration.GetSection("Database"));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

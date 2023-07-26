@@ -1,9 +1,8 @@
-﻿using CrossCutting.Configurations;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using Infrastructure.Repository.Collections;
 using Mapster;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
 namespace Infrastructure.Repository.Repositories
@@ -12,7 +11,7 @@ namespace Infrastructure.Repository.Repositories
     {
         private const string _collectionName = "jobs";
 
-        public JobRepository(IOptions<AppSettings> options) : base(options, _collectionName) { }
+        public JobRepository(IConfiguration configuration) : base(configuration, _collectionName) { }
 
         public async Task<IEnumerable<JobDto>> GetAllAsync()
         {

@@ -1,8 +1,8 @@
 ﻿using Domain.Entities;
-using Infrastucture.Repository.Collections;
+using Infrastructure.Repository.Collections;
 using Mapster;
 
-namespace Infrastucture.Repository.Adapters
+namespace Infrastructure.Repository.Adapters
 {
     public sealed class JobAdapter : IRegister
     {

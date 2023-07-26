@@ -1,5 +1,6 @@
 using CrossCutting.Configurations;
 using Infrastructure.IoC;
+using Microsoft.AspNetCore.Rewrite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddMapster();
 
+builder.Services.AddHealthChecks();
 var app = builder.Build();
+app.MapHealthChecks("/health");
+
+var option = new RewriteOptions();
+option.AddRedirect("^$", "swagger");
+app.UseRewriter(option);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

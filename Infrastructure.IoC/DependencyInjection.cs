@@ -1,7 +1,7 @@
 ﻿using Domain.Interfaces.Repositories;
 using Domain.Queries;
-using Infrastucture.Repository.Adapters;
-using Infrastucture.Repository.Repositories;
+using Infrastructure.Repository.Adapters;
+using Infrastructure.Repository.Repositories;
 using Mapster;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;

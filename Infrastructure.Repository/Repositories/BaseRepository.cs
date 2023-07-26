@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace Infrastucture.Repository.Repositories
+namespace Infrastructure.Repository.Repositories
 {
     public abstract class BaseRepository<Source, Destination>
     {

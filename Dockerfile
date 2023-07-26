@@ -1,6 +1,8 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_ENVIRONMENT=Development
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -11,7 +13,8 @@ COPY ["*.sln", "./"]
 COPY ["Api/Api.csproj", "Api/"]
 COPY ["CrossCutting.Configurations/CrossCutting.Configurations.csproj", "CrossCutting.Configurations/"]
 COPY ["Domain/Domain.csproj", "Domain/"]
-COPY ["Infrastucture.Repository/Infrastucture.Repository.csproj", "Infrastucture.Repository/"]
+COPY ["Infrastructure.IoC/Infrastructure.IoC.csproj", "Infrastructure.IoC/"]
+COPY ["Infrastructure.Repository/Infrastructure.Repository.csproj", "Infrastructure.Repository/"]
 
 RUN dotnet restore "Api/Api.csproj"
 COPY . .

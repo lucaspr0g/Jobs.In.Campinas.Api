@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Infrastucture.Repository.Collections
+namespace Infrastructure.Repository.Collections
 {
     public sealed class JobModel
     {

@@ -1,12 +1,12 @@
 ﻿using CrossCutting.Configurations;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
-using Infrastucture.Repository.Collections;
+using Infrastructure.Repository.Collections;
 using Mapster;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace Infrastucture.Repository.Repositories
+namespace Infrastructure.Repository.Repositories
 {
     public class JobRepository : BaseRepository<JobModel, JobDto>, IJobRepository
     {
@@ -29,10 +29,10 @@ namespace Infrastucture.Repository.Repositories
                 .Find(s => s.Id == id)
                 .FirstOrDefaultAsync();
 
-            return new JobDto 
-            { 
+            return new JobDto
+            {
                 Id = job.Id,
-                Title = job.Title 
+                Title = job.Title
             };
         }
 

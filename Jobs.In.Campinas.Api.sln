@@ -7,13 +7,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{509D693A-B9F1-44C1-84DC-F57369CA496E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastucture.Repository", "Infrastucture.Repository\Infrastucture.Repository.csproj", "{B4CF21FC-7267-457F-852D-B1E074EEEA66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Repository", "Infrastructure.Repository\Infrastructure.Repository.csproj", "{B4CF21FC-7267-457F-852D-B1E074EEEA66}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossCutting.Configurations", "CrossCutting.Configurations\CrossCutting.Configurations.csproj", "{211CE426-44D2-4F0B-B65A-E901A4CCA710}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{B74B0F7C-6306-4529-8911-BD1822499EF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.IoC", "Infrastructure.IoC\Infrastructure.IoC.csproj", "{033AFCCF-FB89-458B-90FE-10B5841A5897}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.IoC", "Infrastructure.IoC\Infrastructure.IoC.csproj", "{033AFCCF-FB89-458B-90FE-10B5841A5897}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{09191251-B231-4811-B7EA-3F2FA7FBCAA1}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

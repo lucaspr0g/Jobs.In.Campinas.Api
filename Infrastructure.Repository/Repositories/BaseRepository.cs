@@ -10,7 +10,7 @@ namespace Infrastructure.Repository.Repositories
         public BaseRepository(IConfiguration configuration, string collectionName)
         {
             var client = new MongoClient(configuration.GetConnectionString("MongoDb"));
-            var database = client.GetDatabase(configuration.GetSection("DatabaseName").Value);
+            var database = client.GetDatabase(configuration["DatabaseName"]);
 
             _collection = database.GetCollection<Source>(collectionName);
         }

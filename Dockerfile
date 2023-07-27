@@ -14,6 +14,7 @@ COPY ["Api/Api.csproj", "Api/"]
 COPY ["Domain/Domain.csproj", "Domain/"]
 COPY ["Infrastructure.IoC/Infrastructure.IoC.csproj", "Infrastructure.IoC/"]
 COPY ["Infrastructure.Repository/Infrastructure.Repository.csproj", "Infrastructure.Repository/"]
+COPY ["Infrastructure.Services/Infrastructure.Services.csproj", "Infrastructure.Services/"]
 
 RUN dotnet restore "Api/Api.csproj"
 COPY . .

@@ -29,3 +29,5 @@
 /Api/appsettings.Development.json
 /Infrastructure.Repository/bin/Debug
 /Infrastructure.Repository/obj
+/Infrastructure.Services/bin/Debug/net7.0
+/Infrastructure.Services/obj

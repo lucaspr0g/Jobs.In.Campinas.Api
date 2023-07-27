@@ -8,7 +8,7 @@ namespace Infrastructure.Repository.Adapters
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<JobModel, JobDto>()
+            config.NewConfig<Job, JobDto>()
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.Title, src => src.Title);
         }

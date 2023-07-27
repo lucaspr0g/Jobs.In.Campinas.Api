@@ -1,12 +1,14 @@
 ﻿using Domain.Commands.Job;
 using Domain.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
     [ApiController]
-    [Route("api/jobs")]
+    [Authorize("Bearer")]
+    [Route("api/v1/[controller]")]
     public class JobsController : ControllerBase
     {
         private readonly IMediator _mediator;

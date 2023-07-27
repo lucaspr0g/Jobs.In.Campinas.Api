@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 namespace Infrastructure.Repository.Repositories
 {
-    public class JobRepository : BaseRepository<JobModel, JobDto>, IJobRepository
+    public class JobRepository : BaseRepository<Job, JobDto>, IJobRepository
     {
         private const string _collectionName = "jobs";
 
@@ -37,7 +37,7 @@ namespace Infrastructure.Repository.Repositories
 
         public async Task CreateAsync(JobDto dto)
         {
-            var job = new JobModel
+            var job = new Job
             {
                 Title = dto.Title
             };
@@ -47,7 +47,7 @@ namespace Infrastructure.Repository.Repositories
 
         public async Task UpdateAsync(string id, JobDto dto)
         {
-            var job = new JobModel { Title = dto.Title };
+            var job = new Job { Title = dto.Title };
             await _collection.ReplaceOneAsync(s => s.Id == id, job);
         }
 

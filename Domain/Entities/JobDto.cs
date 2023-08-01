@@ -1,9 +1,9 @@
 ﻿namespace Domain.Entities
 {
-    public sealed class JobDto
-    {
-        public string Id { get; set; }
-
-        public string Title { get; set; }
-    }
+    public sealed record JobDto(string Id, 
+        string Title, 
+        string Description, 
+        int Positions, 
+        string CreatedOn, 
+        string Time);
 }

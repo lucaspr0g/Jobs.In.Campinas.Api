@@ -1,8 +1,8 @@
-﻿using Domain.Entities;  
+﻿using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using MediatR;
 
-namespace Domain.Queries
+namespace Domain.Queries.GetJobs
 {
     public sealed class GetJobsQueryHandler : IRequestHandler<GetJobsQuery, IEnumerable<JobDto>>
     {

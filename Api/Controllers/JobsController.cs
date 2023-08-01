@@ -1,5 +1,6 @@
 ﻿using Domain.Commands.Job;
-using Domain.Queries;
+using Domain.Queries.GetJob;
+using Domain.Queries.GetJobs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,25 @@ namespace Api.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetJobs()
         {
             var query = new GetJobsQuery();
             return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetJob(string id)
+        {
+            var query = new GetJobQuery(id);
+
+            var job = await _mediator.Send(query);
+
+            if (job is null)
+                return NotFound();
+
+            return Ok(job);
         }
 
         [HttpPost]

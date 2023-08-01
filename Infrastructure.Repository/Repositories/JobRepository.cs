@@ -28,19 +28,13 @@ namespace Infrastructure.Repository.Repositories
                 .Find(s => s.Id == id)
                 .FirstOrDefaultAsync();
 
-            return new JobDto
-            {
-                Id = job.Id,
-                Title = job.Title
-            };
+            return job.Adapt<JobDto>();
         }
 
         public async Task CreateAsync(JobDto dto)
         {
-            var job = new Job
-            {
-                Title = dto.Title
-            };
+            var job = dto.Adapt<Job>();
+            job.CreatedOn = DateTime.Now;
 
             await _collection.InsertOneAsync(job);
         }

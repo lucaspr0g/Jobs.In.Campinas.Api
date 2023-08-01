@@ -9,9 +9,20 @@ namespace Infrastructure.Repository.Collections
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [BsonElement("title")]
-        public string? Title { get; set; }
+        public string Title { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
+
+        [BsonElement("positions")]
+        public int Positions { get; set; }
+
+        [BsonElement("createdOn")]
+        public DateTime CreatedOn { get; set; }
+
+        [BsonElement("modifiedOn")]
+        public DateTime? ModifiedOn { get; set; }
     }
 }

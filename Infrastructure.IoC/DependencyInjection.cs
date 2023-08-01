@@ -1,6 +1,6 @@
 ﻿using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
-using Domain.Queries;
+using Domain.Queries.GetJobs;
 using Infrastructure.Repository.Adapters;
 using Infrastructure.Repository.Collections;
 using Infrastructure.Repository.Repositories;

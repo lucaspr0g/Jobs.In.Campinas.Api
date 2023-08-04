@@ -25,10 +25,8 @@ namespace Domain.Commands.Account.Login
 
             return new LoginResponse
             {
-                AccessToken = token,
-                Email = user.Email,
-                UserId = user.Id,
-                Message = "usuário logado com sucesso."
+                Token = token,
+                User = new User(user.Id, user.Email, user.Name)
             };
         }
     }

@@ -7,5 +7,7 @@ namespace Infrastructure.Repository.Collections
     public sealed class ApplicationUser : MongoIdentityUser
     {
         public string Name { get; set; } = string.Empty;
+
+        public DateTime? ModifiedOn { get; set; }
     }
 }

@@ -5,6 +5,8 @@ using Domain.Interfaces.Services;
 using Domain.Utils;
 using Infrastructure.Repository.Collections;
 using Infrastructure.Services.Entities;
+using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,12 +18,19 @@ namespace Infrastructure.Services.Handlers
     {
         private const string Separator = ". ";
 
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly TokenConfigurations _tokenConfigurations; 
+        private readonly TokenConfigurations _tokenConfigurations;
 
-        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenConfigurations tokenConfigurations)
+        public AccountService(
+            IHttpContextAccessor httpContextAccessor,
+            UserManager<ApplicationUser> userManager, 
+            SignInManager<ApplicationUser> signInManager, 
+            TokenConfigurations tokenConfigurations)
         {
+            _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenConfigurations = tokenConfigurations;
@@ -49,8 +58,6 @@ namespace Infrastructure.Services.Handlers
                 new Claim(JwtRegisteredClaimNames.Jti, ApplicationHelper.GenerateGuid())
             };
 
-            var handler = new JwtSecurityTokenHandler();
-
             var token = new JwtSecurityToken(
                 issuer: _tokenConfigurations.Issuer,
                 audience: _tokenConfigurations.Audience,
@@ -60,7 +67,7 @@ namespace Infrastructure.Services.Handlers
                 expires: DateTime.Now.AddSeconds(_tokenConfigurations.Seconds)
             );
 
-            return handler.WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         public async Task<AccountCreateResponse> CreateAsync(AccountCreateRequest request)
@@ -74,7 +81,7 @@ namespace Infrastructure.Services.Handlers
             {
                 Email = request.Email,
                 UserName = request.Email,
-                Name = request.Email,
+                Name = request.Name,
                 ConcurrencyStamp = ApplicationHelper.GenerateGuid()
             };
 
@@ -89,6 +96,18 @@ namespace Infrastructure.Services.Handlers
         public async Task LogoffAsync()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        public async Task<UserDto> GetAuthenticatedUser(string userId)
+        {
+            //var claimsPrincipal = _httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
+
+            //if (!_signInManager.IsSignedIn(claimsPrincipal))
+            //    throw new UnauthorizedAccessException("usuário não está logado");
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            return user!.Adapt<UserDto>();
         }
 
         private static string RetrieveMessage(IdentityResult? result)

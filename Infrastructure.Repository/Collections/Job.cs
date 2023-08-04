@@ -24,5 +24,7 @@ namespace Infrastructure.Repository.Collections
 
         [BsonElement("modifiedOn")]
         public DateTime? ModifiedOn { get; set; }
+
+        public string UserId { get; set; }
     }
 }

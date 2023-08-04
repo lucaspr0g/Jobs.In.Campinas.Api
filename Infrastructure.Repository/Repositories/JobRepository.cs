@@ -22,6 +22,15 @@ namespace Infrastructure.Repository.Repositories
             return jobs.Adapt<IEnumerable<JobDto>>();
         }
 
+        //public async Task<IEnumerable<JobDto>> GetUserJobsAsync(string userId)
+        //{
+        //    var jobs = await _collection
+        //        .Find(s => s.CreatedOn)
+        //        .ToListAsync();
+
+        //    return jobs.Adapt<IEnumerable<JobDto>>();
+        //}
+
         public async Task<JobDto> GetAsync(string id)
         {
             var job = await _collection
@@ -31,12 +40,14 @@ namespace Infrastructure.Repository.Repositories
             return job.Adapt<JobDto>();
         }
 
-        public async Task CreateAsync(JobDto dto)
+        public async Task<JobDto> CreateAsync(JobDto dto)
         {
             var job = dto.Adapt<Job>();
             job.CreatedOn = DateTime.Now;
 
             await _collection.InsertOneAsync(job);
+
+            return job.Adapt<JobDto>();
         }
 
         public async Task UpdateAsync(string id, JobDto dto)
@@ -47,5 +58,10 @@ namespace Infrastructure.Repository.Repositories
 
         public async Task RemoveAsync(string id) =>
             await _collection.DeleteOneAsync(s => s.Id == id);
+
+        public Task GetUserJobsAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

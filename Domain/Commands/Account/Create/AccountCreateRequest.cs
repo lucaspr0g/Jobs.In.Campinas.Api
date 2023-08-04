@@ -7,6 +7,9 @@ namespace Domain.Commands.Account.Create
     public sealed class AccountCreateRequest : IRequest<AccountCreateResponse>
     {
         [Required]
+        public string Name { get; set; } = string.Empty;
+
+        [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
@@ -14,9 +17,17 @@ namespace Domain.Commands.Account.Create
         [PasswordPropertyText]
         public string Password { get; set; } = string.Empty;
 
+        [Required]
+        [PasswordPropertyText]
+        public string ConfirmPassword { get; set; } = string.Empty;
+
         public bool IsValid()
         {
-            return !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password);
+            return !string.IsNullOrWhiteSpace(Name) && 
+                !string.IsNullOrWhiteSpace(Email) && 
+                !string.IsNullOrWhiteSpace(Password) && 
+                !string.IsNullOrWhiteSpace(ConfirmPassword) &&
+                Password == ConfirmPassword;
         }
     }
 }

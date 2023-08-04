@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Queries.GetJobs;
+using Domain.Queries.GetUserJobs;
 using Infrastructure.Repository.Adapters;
 using Infrastructure.Repository.Collections;
 using Infrastructure.Repository.Repositories;
@@ -86,23 +87,23 @@ namespace Infrastructure.IoC
         public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, TokenConfigurations tokenConfigurations)
         {
             services.AddAuthentication()
-                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-                 {
-                     options.Authority = $"https://{tokenConfigurations.Domain}";
-                     options.SaveToken = true;
-                     options.Configuration = new OpenIdConnectConfiguration();
-                     options.TokenValidationParameters =
-                       new TokenValidationParameters
-                       {
-                           ValidAudience = tokenConfigurations.Audience,
-                           ValidIssuer = tokenConfigurations.Issuer,
-                           IssuerSigningKey = tokenConfigurations.SecurityKey,
-                           ValidateIssuerSigningKey = true, // Valida a assinatura de um token recebido
-                           ValidateLifetime = true, // Verifica se um token recebido ainda é válido
-                           ClockSkew = TimeSpan.Zero
-                       };
-                 });
-
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.Authority = $"https://{tokenConfigurations.Domain}";
+                    options.SaveToken = true;
+                    options.Configuration = new OpenIdConnectConfiguration();
+                    options.TokenValidationParameters =
+                    new TokenValidationParameters
+                    {
+                        ValidAudience = tokenConfigurations.Audience,
+                        ValidIssuer = tokenConfigurations.Issuer,
+                        IssuerSigningKey = tokenConfigurations.SecurityKey,
+                        ValidateIssuerSigningKey = true, // Valida a assinatura de um token recebido
+                        ValidateLifetime = true, // Verifica se um token recebido ainda é válido
+                        ClockSkew = TimeSpan.Zero,
+                        AuthenticationType = "ApplicationCookie"
+                    };
+                });
 
             return services;
         }

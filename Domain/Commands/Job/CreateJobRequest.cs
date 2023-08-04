@@ -10,10 +10,13 @@ namespace Domain.Commands.Job
 
         public int Positions { get; set; }
 
-        public bool IsVald()
+        public string UserId { get; set; } = string.Empty;
+
+        public bool IsValid()
         {
             return !string.IsNullOrWhiteSpace(Title) && 
                 !string.IsNullOrWhiteSpace(Description) && 
+                !string.IsNullOrWhiteSpace(UserId) &&
                 Positions > 0;
         }
     }

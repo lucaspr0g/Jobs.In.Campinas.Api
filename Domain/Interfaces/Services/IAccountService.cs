@@ -10,5 +10,6 @@ namespace Domain.Interfaces.Services
         string GenerateToken(UserDto user);
         Task<AccountCreateResponse> CreateAsync(AccountCreateRequest request);
         Task LogoffAsync();
+        Task<UserDto> GetAuthenticatedUser(string userId);
     }
 }

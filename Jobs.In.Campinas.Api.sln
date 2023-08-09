@@ -16,7 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{091912
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Services", "Infrastructure.Services\Infrastructure.Services.csproj", "{7D283860-355E-4C44-B113-C5B8EAFB34EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Services", "Infrastructure.Services\Infrastructure.Services.csproj", "{7D283860-355E-4C44-B113-C5B8EAFB34EC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Client", "Web\Client\Web.Client.csproj", "{CAB8EC89-6EA1-4575-9531-92CBEA99BF89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{7D283860-355E-4C44-B113-C5B8EAFB34EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D283860-355E-4C44-B113-C5B8EAFB34EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D283860-355E-4C44-B113-C5B8EAFB34EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAB8EC89-6EA1-4575-9531-92CBEA99BF89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAB8EC89-6EA1-4575-9531-92CBEA99BF89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAB8EC89-6EA1-4575-9531-92CBEA99BF89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAB8EC89-6EA1-4575-9531-92CBEA99BF89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

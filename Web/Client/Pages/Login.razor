@@ -1,0 +1,58 @@
+﻿@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h1>Login</h1>
+
+<div class="card">
+	<div class="card-body">
+		<h5 class="card-title">Por favor, preencha os dados</h5>
+		<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+			<DataAnnotationsValidator />
+			<ValidationSummary />
+
+			<div class="form-group">
+				<label for="email">Email</label>
+				<InputText Id="email" Class="form-control" @bind-Value="loginModel.Email" />
+				<ValidationMessage For="@(() => loginModel.Email)" />
+			</div>
+			<div class="form-group">
+				<label for="password">Senha</label>
+				<InputText Id="password" type="password" Class="form-control" @bind-Value="loginModel.Password" />
+				<ValidationMessage For="@(() => loginModel.Password)" />
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</EditForm>
+	</div>
+</div>
+
+@code {
+	[Inject] protected PreloadService PreloadService { get; set; }
+	[Inject] protected ToastService ToastService { get; set; }
+
+	private LoginModel loginModel = new LoginModel();
+	//List<ToastMessage> messages = new List<ToastMessage>();
+
+	private async Task HandleLogin()
+	{
+		try
+		{
+			PreloadService.Show(SpinnerColor.Primary);
+			var result = await AuthService.Login(loginModel);
+
+			if (result.User is not null)
+			{
+				NavigationManager.NavigateTo("/conta");
+			}
+			else
+			{
+				ToastService.Notify(new(ToastType.Danger, "erro ao fazer login"));
+			}
+		}
+		catch { }
+		finally
+		{
+			PreloadService.Hide();
+		}
+	}
+}

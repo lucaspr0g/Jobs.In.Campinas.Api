@@ -1,0 +1,72 @@
+﻿@page "/vagas/editar/{id}"
+@inject IJobService JobService
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize]
+
+<div class="text-center">
+    <EditForm Model="UpdateJobRequest" OnValidSubmit="HandleEdit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="title">Título</label>
+            <InputText Id="title" class="form-control" @bind-Value="UpdateJobRequest.Title" />
+            <ValidationMessage For="@(() => UpdateJobRequest.Title)" />
+        </div>
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <InputText Id="description" type="text" class="form-control" @bind-Value="UpdateJobRequest.Title" />
+            <ValidationMessage For="@(() => UpdateJobRequest.Title)" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Inject] protected PreloadService PreloadService { get; set; }
+
+    private UpdateJobRequest UpdateJobRequest = new();
+    private bool ShowErrors;
+    private string? Errors;
+    private bool shouldRender;
+    private JobResponse Job = new();
+
+    protected override bool ShouldRender() => shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Job = await JobService.GetJobById(Id!);
+        shouldRender = true;
+    }
+
+    private async Task HandleEdit()
+    {
+        ShowErrors = false;
+
+        try
+        {
+            PreloadService.Show(SpinnerColor.Primary);
+            var (success, message) = await JobService.UpdateJob(UpdateJobRequest);
+
+            if (success)
+            {
+                NavigationManager.NavigateTo("/conta");
+            }
+            else
+            {
+                Errors = message;
+                ShowErrors = true;
+            }
+        }
+        catch { }
+        finally
+        {
+            shouldRender = true;
+            PreloadService.Hide();
+        }
+    }
+}

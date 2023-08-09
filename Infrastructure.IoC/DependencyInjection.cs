@@ -1,7 +1,6 @@
 ﻿using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Queries.GetJobs;
-using Domain.Queries.GetUserJobs;
 using Infrastructure.Repository.Adapters;
 using Infrastructure.Repository.Collections;
 using Infrastructure.Repository.Repositories;
@@ -34,6 +33,7 @@ namespace Infrastructure.IoC
             services.AddSingleton(tokenConfigurations);
 
             services.AddScoped<IJobRepository, JobRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IAccountService, AccountService>();
 

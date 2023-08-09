@@ -18,22 +18,21 @@ namespace Infrastructure.Services.Handlers
     {
         private const string Separator = ". ";
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly TokenConfigurations _tokenConfigurations;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AccountService(
-            IHttpContextAccessor httpContextAccessor,
             UserManager<ApplicationUser> userManager, 
             SignInManager<ApplicationUser> signInManager, 
-            TokenConfigurations tokenConfigurations)
+            TokenConfigurations tokenConfigurations,
+            IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenConfigurations = tokenConfigurations;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<UserDto> AuthenticateAsync(LoginRequestDto request)
@@ -54,8 +53,8 @@ namespace Infrastructure.Services.Handlers
             var claims = new List<Claim>(3)
             {
                 new Claim(ClaimTypes.Name, user.Name),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, ApplicationHelper.GenerateGuid())
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Email)
             };
 
             var token = new JwtSecurityToken(
@@ -93,21 +92,9 @@ namespace Infrastructure.Services.Handlers
             return new AccountCreateResponse(true, "usuario criado com sucesso");
         }
 
-        public async Task LogoffAsync()
+        public string GetAuthenticatedUserId()
         {
-            await _signInManager.SignOutAsync();
-        }
-
-        public async Task<UserDto> GetAuthenticatedUser(string userId)
-        {
-            //var claimsPrincipal = _httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
-
-            //if (!_signInManager.IsSignedIn(claimsPrincipal))
-            //    throw new UnauthorizedAccessException("usuário não está logado");
-
-            var user = await _userManager.FindByIdAsync(userId);
-
-            return user!.Adapt<UserDto>();
+            return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         }
 
         private static string RetrieveMessage(IdentityResult? result)

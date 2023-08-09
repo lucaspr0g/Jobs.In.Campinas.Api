@@ -31,3 +31,7 @@
 /Infrastructure.Repository/obj
 /Infrastructure.Services/bin/Debug/net7.0
 /Infrastructure.Services/obj
+/Web/Client/obj
+/Web/Server/obj
+/Web/Shared/obj
+/Web/Client/bin/Debug/net7.0

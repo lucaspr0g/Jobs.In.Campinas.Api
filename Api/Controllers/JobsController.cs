@@ -1,4 +1,6 @@
-﻿using Domain.Commands.Job;
+﻿using Domain.Commands.Job.Create;
+using Domain.Commands.Job.Update;
+using Domain.Entities;
 using Domain.Queries.GetJob;
 using Domain.Queries.GetJobs;
 using Domain.Queries.GetUserJobs;
@@ -63,7 +65,21 @@ namespace Api.Controllers
             }
             catch (ArgumentException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new BadRequestResponse(e.Message));
+            }
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> UpdateeJob(UpdateJobRequest request)
+        {
+            try
+            {
+                await _mediator.Send(request);
+                return NoContent();
+            }
+            catch (ArgumentException e)
+            {
+                return BadRequest(new BadRequestResponse(e.Message));
             }
         }
     }

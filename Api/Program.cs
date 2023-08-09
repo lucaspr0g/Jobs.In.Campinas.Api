@@ -23,6 +23,17 @@ builder.Services.ConfigureAuthorization();
 builder.Services.AddMapster();
 builder.Services.AddHealthChecks();
 
+//builder.Services.AddCors(cfg =>
+//{
+//    cfg.AddPolicy("AllowedOrigins",
+//        policy =>
+//        {
+//            policy.AllowAnyOrigin()
+//                .AllowAnyMethod()
+//                .AllowAnyHeader();
+//        });
+//});
+
 var app = builder.Build();
 app.MapHealthChecks("/health");
 
@@ -39,6 +50,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+//app.UseCors();
 
 app.MapControllers();
 

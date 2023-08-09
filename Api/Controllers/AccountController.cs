@@ -1,6 +1,5 @@
 ﻿using Domain.Commands.Account.Create;
 using Domain.Commands.Account.Login;
-using Domain.Commands.Account.Logoff;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,24 +48,6 @@ namespace Api.Controllers
             catch (Exception)
             {
                 return Unauthorized();
-            }
-        }
-
-        [HttpPost]
-        [Route("[action]")]
-        [Authorize("Bearer")]
-        [ProducesResponseType(typeof(LoginResponse), (int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Logoff()
-        {
-            try
-            {
-                await _mediator.Send(new LogoffRequest());
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
             }
         }
     }

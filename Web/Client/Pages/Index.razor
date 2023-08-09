@@ -1,0 +1,53 @@
+﻿@inject IJobService JobService
+
+@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<div class="d-flex flex-column align-items-center">
+	@foreach (var job in Jobs)
+	{
+		@*<di class="text-center"></di>*@
+		<div class="col-6">
+			<div class="card mb-4 job-card">
+				<a href="/vagas/@job.Id" class="job-card-link">
+					<div class="card-header">
+						<div class="p-2">
+							<div class="row card-header-date mb-2">@job.CreatedOn @job.Time</div>
+							<div class="row">@job.Title</div>
+						</div>
+					</div>
+					<div class="card-body">
+						@job.Description
+					</div>
+				</a>
+			</div>
+		</div>
+	}
+</div>
+
+@code {
+	[Inject] protected PreloadService PreloadService { get; set; }
+
+	private bool ShowErrors;
+	private string? Errors;
+	private bool shouldRender;
+	private IEnumerable<JobResponse> Jobs = Enumerable.Empty<JobResponse>();
+
+	protected override bool ShouldRender() => shouldRender;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			PreloadService.Show(SpinnerColor.Primary);
+			Jobs = await JobService.GetJobs();
+		}
+		catch {}
+		finally
+		{
+			shouldRender = true;
+			PreloadService.Hide();
+		}
+	}
+}

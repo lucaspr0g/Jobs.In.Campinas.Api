@@ -15,7 +15,7 @@ namespace Domain.Commands.Account.Create
         public async Task<AccountCreateResponse> Handle(AccountCreateRequest request, CancellationToken cancellationToken)
         {
             if (!request.IsValid())
-                throw new ArgumentException("dados invalidos");
+                return new AccountCreateResponse(false, "dados invalidos");
 
             return await _accountService.CreateAsync(request);
         }

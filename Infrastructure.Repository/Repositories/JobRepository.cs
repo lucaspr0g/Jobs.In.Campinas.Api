@@ -22,15 +22,6 @@ namespace Infrastructure.Repository.Repositories
             return jobs.Adapt<IEnumerable<JobDto>>();
         }
 
-        //public async Task<IEnumerable<JobDto>> GetUserJobsAsync(string userId)
-        //{
-        //    var jobs = await _collection
-        //        .Find(s => s.CreatedOn)
-        //        .ToListAsync();
-
-        //    return jobs.Adapt<IEnumerable<JobDto>>();
-        //}
-
         public async Task<JobDto> GetAsync(string id)
         {
             var job = await _collection
@@ -50,10 +41,41 @@ namespace Infrastructure.Repository.Repositories
             return job.Adapt<JobDto>();
         }
 
+        public async Task<JobDto> CreateAsync(JobDto dto, string userId)
+        {
+            var job = dto.Adapt<Job>();
+            job.CreatedOn = DateTime.Now;
+            job.UserId = userId;
+            job.Status = "Opened";
+
+            await _collection.InsertOneAsync(job);
+
+            return job.Adapt<JobDto>();
+        }
+
         public async Task UpdateAsync(string id, JobDto dto)
         {
-            var job = new Job { Title = dto.Title };
-            await _collection.ReplaceOneAsync(s => s.Id == id, job);
+            //var job = dto.Adapt<Job>();
+            //job.ModifiedOn = DateTime.Now;
+
+            //await _collection.ReplaceOneAsync(s => s.Id == id, job);
+
+            var filter = Builders<Job>
+                .Filter
+                .Eq(job => job.Id, id);
+
+            var update = Builders<Job>
+                .Update
+                .Set(job => job.ModifiedOn, DateTime.Now)
+                .Set(job => job.Title, dto.Title)
+                .Set(job => job.Description, dto.Description)
+                .Set(job => job.Positions, dto.Positions)
+                .Set(job => job.Requirements, dto.Requirements)
+                .Set(job => job.Contact, dto.Contact)
+                .Set(job => job.Location, dto.Location)
+                .Set(job => job.Salary, dto.Salary);
+
+            await _collection.UpdateOneAsync(filter, update);
         }
 
         public async Task RemoveAsync(string id) =>

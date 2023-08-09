@@ -1,0 +1,64 @@
+﻿@page "/conta"
+@inject IJobService JobService
+@attribute [Authorize]
+
+<AuthorizeView>
+	<Authorized>
+		<div class="d-flex flex-row">
+			<div class="col-3">submenu</div>
+			<div class="col-9">
+				<h3>Minha vagas</h3>
+				<a href="vagas/nova">Nova vaga</a>
+				<table class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th scope="col">Título</th>
+							<th scope="col">Criado em</th>
+							<th scope="col">Ações</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var job in Jobs)
+						{
+							<tr>
+								<td>@job.Title</td>
+								<td>@job.CreatedOn @job.Time</td>
+								<td>
+									<a href="vagas/editar/@job.Id" class="btn btn-primary">Editar</a>
+									<buttom type="buttom" class="btn btn-danger">Excluir</buttom>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+	</Authorized>
+</AuthorizeView>
+
+@code {
+	[Inject] protected PreloadService PreloadService { get; set; }
+
+	private bool ShowErrors;
+	private string? Errors;
+	private bool shouldRender;
+	private IEnumerable<JobResponse> Jobs = Enumerable.Empty<JobResponse>();
+
+	protected override bool ShouldRender() => shouldRender;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			PreloadService.Show(SpinnerColor.Primary);
+			Jobs = await JobService.GetUserJobs();
+		}
+		catch { }
+		finally
+		{
+			shouldRender = true;
+			PreloadService.Hide();
+		}
+	}
+}

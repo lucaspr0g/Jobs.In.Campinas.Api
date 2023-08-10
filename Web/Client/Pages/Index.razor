@@ -1,27 +1,36 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Empregos Campinas - Vagas</PageTitle>
 
-<div class="d-flex flex-column align-items-center">
+<div class="container mt-4">
+	<h1 class="mb-3">Últimas vagas</h1>
+	@* <div class="d-flex flex-column align-items-center"> *@
 	@foreach (var job in Jobs)
 	{
-		<div class="col-6">
+		<div class="col">
 			<div class="card mb-4 job-card">
-				<a href="/vagas/@job.Id" class="job-card-link">
-					<div class="card-header">
-						<div class="p-2">
-							<div class="row card-header-date mb-2">@job.CreatedOn @job.Time</div>
-							<div class="row">@job.Title</div>
+				<Tooltip Title="Clique para ver mais">
+					<a href="/vagas/@job.Id" class="job-card-link">
+						<div class="card-header">
+							<div class="row">
+								<div><b>Título da vaga: </b>@job.Title</div>
+								<div><b>Data: </b>@job.CreatedOn @job.Time</div>
+								<div><b>Local: </b>@job.Location</div>
+							</div>
 						</div>
-					</div>
-					<div class="card-body">
-						@job.Description
-					</div>
-				</a>
+						<div class="card-body">
+							<div class="row">
+								<p><b>Descrição: </b>@job.Description</p>
+							</div>
+						</div>
+					</a>
+				</Tooltip>
 			</div>
 		</div>
 	}
+	@* </div> *@
 </div>
+
 
 @code {
 	private bool shouldRender;
@@ -36,7 +45,7 @@
 			PreloadService.Show(SpinnerColor.Primary);
 			Jobs = await JobService.GetJobs();
 		}
-		catch {}
+		catch { }
 		finally
 		{
 			shouldRender = true;

@@ -121,3 +121,11 @@ a, .btn-link {
 .job-card-link:hover {
     all: unset;
 }
+
+.footer {
+    padding: 20px 0;
+}
+
+.defult-content {
+    min-height: calc(100vh - 176px) !important;
+}

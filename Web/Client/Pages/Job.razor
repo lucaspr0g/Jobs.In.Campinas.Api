@@ -1,51 +1,53 @@
 ﻿@page "/vagas/{id}"
 
-<div class="text-center">
-    <div class="row">
-        <h3>@JobResponse.Title</h3>
-    </div>
-    <hr />
-    <div class="row">
-        <p><strong>Descrição da vaga:</strong> @JobResponse.Description</p>
-    </div>
-    <div class="row">
-        <p><strong>Requisitos:</strong> @JobResponse.Requirements</p>
-    </div>
-    <div class="row">
-        <p><strong>Contato:</strong> @JobResponse.Contact</p>
-    </div>
-    <div class="row">
-        <p><strong>Local:</strong> @JobResponse.Location</p>
-    </div>
-    <div class="row">
-        <p><strong>Salário:</strong> @(JobResponse.Salary is null ? "Não informado" : JobResponse.Salary.Value.ToString("c"))</p>
-    </div>
-    <div class="row">
-        <p><strong>Vagas:</strong> @JobResponse.Positions</p>
-    </div>
+<div class="container mt-4">
+	<div class="row">
+		<h3>@JobResponse.Title</h3>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col">
+			<p class="text-break"><strong>Descrição da vaga:</strong> @JobResponse.Description</p>
+		</div>
+	</div>
+	<div class="row">
+		<p><strong>Requisitos:</strong> @JobResponse.Requirements</p>
+	</div>
+	<div class="row">
+		<p><strong>Contato:</strong> @JobResponse.Contact</p>
+	</div>
+	<div class="row">
+		<p><strong>Local:</strong> @JobResponse.Location</p>
+	</div>
+	<div class="row">
+		<p><strong>Salário:</strong> @(JobResponse.Salary is null ? "Não informado" : JobResponse.Salary.Value.ToString("c"))</p>
+	</div>
+	<div class="row">
+		<p><strong>Vagas:</strong> @JobResponse.Positions</p>
+	</div>
 </div>
 
 @code {
-    [Parameter]
-    public string? Id { get; set; }
+	[Parameter]
+	public string? Id { get; set; }
 
-    private bool shouldRender;
-    private JobResponse JobResponse = new();
+	private bool shouldRender;
+	private JobResponse JobResponse = new();
 
-    protected override bool ShouldRender() => shouldRender;
+	protected override bool ShouldRender() => shouldRender;
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            PreloadService.Show(SpinnerColor.Primary);
-            JobResponse = await JobService.GetJobById(Id!);
-        }
-        catch { }
-        finally
-        {
-            shouldRender = true;
-            PreloadService.Hide();
-        }
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			PreloadService.Show(SpinnerColor.Primary);
+			JobResponse = await JobService.GetJobById(Id!);
+		}
+		catch { }
+		finally
+		{
+			shouldRender = true;
+			PreloadService.Hide();
+		}
+	}
 }

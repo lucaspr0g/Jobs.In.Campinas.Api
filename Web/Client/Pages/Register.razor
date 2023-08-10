@@ -1,36 +1,27 @@
 ﻿@page "/cadastro"
 
-<h1>Cadastrar</h1>
-
-<div class="d-flex flex-column align-items-center">
-	<div class="col-6">
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title">Por favor, preencha os dados</h5>
-				<EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
-					<DataAnnotationsValidator />
-					<div class="form-group mb-3">
-						<label for="email">Email</label>
-						<InputText Id="email" class="form-control" @bind-Value="RegisterModel.Email" />
-						<ValidationMessage For="@(() => RegisterModel.Email)" />
-					</div>
-					<div class="form-group mb-3">
-						<label for="password">Senha</label>
-						<InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.Password" />
-						<ValidationMessage For="@(() => RegisterModel.Password)" />
-					</div>
-					<div class="form-group mb-3">
-						<label for="password">Confirme a senha Password</label>
-						<InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.ConfirmPassword" />
-						<ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
-					</div>
-					<button type="submit" class="btn btn-primary">Cadastrar</button>
-				</EditForm>
-			</div>
+<div class="container mt-4">
+	<h1>Cadastro</h1>
+	<EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
+		<DataAnnotationsValidator />
+		<div class="form-group mb-3">
+			<label for="email">Email</label>
+			<InputText Id="email" class="form-control" @bind-Value="RegisterModel.Email" />
+			<ValidationMessage For="@(() => RegisterModel.Email)" />
 		</div>
-	</div>
+		<div class="form-group mb-3">
+			<label for="password">Senha</label>
+			<InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.Password" />
+			<ValidationMessage For="@(() => RegisterModel.Password)" />
+		</div>
+		<div class="form-group mb-3">
+			<label for="password">Confirme a senha Password</label>
+			<InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.ConfirmPassword" />
+			<ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
+		</div>
+		<button type="submit" class="btn btn-primary">Cadastrar</button>
+	</EditForm>
 </div>
-
 
 @code {
 	private RegisterModel RegisterModel = new();

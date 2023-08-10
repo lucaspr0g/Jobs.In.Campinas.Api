@@ -126,6 +126,8 @@ a, .btn-link {
     padding: 20px 0;
 }
 
-.defult-content {
+.default-content {
     min-height: calc(100vh - 176px) !important;
+    max-height: calc(100vh - 176px) !important;
+    overflow-y: auto;
 }

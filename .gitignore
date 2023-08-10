@@ -35,3 +35,8 @@
 /Web/Server/obj
 /Web/Shared/obj
 /Web/Client/bin/Debug/net7.0
+
+.env
+/Web/Client/bin/Release/net7.0
+/Web/Client/Properties/PublishProfiles
+/Web/Client/Web.Client.csproj.user

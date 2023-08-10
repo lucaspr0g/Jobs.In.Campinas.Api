@@ -45,7 +45,7 @@ namespace Api.Controllers
             {
                 return CreatedAtAction(nameof(Create), await _mediator.Send(request));
             }
-			catch (ApplicationException)
+			catch (ArgumentException)
 			{
 				//todo log exception
 				return BadRequest("Erro ao fazer o cadastro, tente novamente.");

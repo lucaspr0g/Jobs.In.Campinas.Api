@@ -21,13 +21,12 @@ namespace Domain.Commands.Job.Create
         public async Task<Unit> Handle(CreateJobRequest request, CancellationToken cancellationToken)
         {
             if (!request.IsValid())
-                throw new ArgumentException("dados invalidos");
+                throw new ArgumentException("Dados inválidos.");
 
             var dto = request.Adapt<JobDto>();
             var userId = _accountService.GetAuthenticatedUserId();
 
             await _jobRepository.CreateAsync(dto, userId);
-            //await _userRepository.AddJobInformation(new Guid(userId), jobDto);
 
             return Unit.Value;
         }

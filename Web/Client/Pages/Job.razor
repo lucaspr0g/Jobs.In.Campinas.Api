@@ -11,7 +11,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<p><strong>Requisitos:</strong> @JobResponse.Requirements</p>
+		<p><strong>Requisítos:</strong> @JobResponse.Requirements</p>
 	</div>
 	<div class="row">
 		<p><strong>Contato:</strong> @JobResponse.Contact</p>
@@ -20,10 +20,10 @@
 		<p><strong>Local:</strong> @JobResponse.Location</p>
 	</div>
 	<div class="row">
-		<p><strong>Salário:</strong> @(JobResponse.Salary is null ? "Não informado" : JobResponse.Salary.Value.ToString("c"))</p>
+		<p><strong>Quantidade de vagas:</strong> @JobResponse.Positions</p>
 	</div>
 	<div class="row">
-		<p><strong>Vagas:</strong> @JobResponse.Positions</p>
+		<p><strong>Salário:</strong> @(JobResponse.Salary is null ? "Não informado" : JobResponse.Salary.Value.ToString("c"))</p>
 	</div>
 </div>
 

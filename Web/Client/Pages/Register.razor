@@ -2,6 +2,7 @@
 
 <div class="container mt-4">
 	<h1>Cadastro</h1>
+	<p>Por favor, preencha os seus dados corretamente.</p>
 	<EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
 		<DataAnnotationsValidator />
 		<div class="form-group mb-3">
@@ -15,7 +16,7 @@
 			<ValidationMessage For="@(() => RegisterModel.Password)" />
 		</div>
 		<div class="form-group mb-3">
-			<label for="password">Confirme a senha Password</label>
+			<label for="password">Confirme a senha</label>
 			<InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.ConfirmPassword" />
 			<ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
 		</div>
@@ -43,7 +44,6 @@
 				ToastService.Notify(new(ToastType.Danger, message));
 			}
 		}
-		catch { }
 		finally
 		{
 			PreloadService.Hide();

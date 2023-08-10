@@ -55,11 +55,6 @@ namespace Infrastructure.Repository.Repositories
 
         public async Task UpdateAsync(string id, JobDto dto)
         {
-            //var job = dto.Adapt<Job>();
-            //job.ModifiedOn = DateTime.Now;
-
-            //await _collection.ReplaceOneAsync(s => s.Id == id, job);
-
             var filter = Builders<Job>
                 .Filter
                 .Eq(job => job.Id, id);
@@ -80,10 +75,5 @@ namespace Infrastructure.Repository.Repositories
 
         public async Task RemoveAsync(string id) =>
             await _collection.DeleteOneAsync(s => s.Id == id);
-
-        public Task GetUserJobsAsync(string userId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

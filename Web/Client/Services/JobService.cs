@@ -5,13 +5,12 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using Web.Client.Entities;
 using Web.Client.Entities.Job;
 using Web.Client.Interfaces;
 
 namespace Web.Client.Services
 {
-    public sealed class JobService : IJobService
+	public sealed class JobService : IJobService
     {
         private readonly HttpClient _httpClient;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
@@ -72,11 +71,11 @@ namespace Web.Client.Services
                 if (result.StatusCode == HttpStatusCode.Unauthorized)
 					return (false, "Recurso não autorizado.");
 
-				var error = await result
+				var message = await result
                     .Content
-                    .ReadFromJsonAsync<BadRequestResponse>();
+                    .ReadAsStringAsync();
 
-				return (false, error?.Message);
+				return (false, message);
 			}
 
 			return (true, default);
@@ -92,11 +91,11 @@ namespace Web.Client.Services
 				if (result.StatusCode == HttpStatusCode.Unauthorized)
 					return (false, "Recurso não autorizado.");
 
-				var error = await result
+				var message = await result
 					.Content
-					.ReadFromJsonAsync<BadRequestResponse>();
+					.ReadAsStringAsync();
 
-				return (false, error?.Message);
+				return (false, message);
 			}
 
 			return (true, default);

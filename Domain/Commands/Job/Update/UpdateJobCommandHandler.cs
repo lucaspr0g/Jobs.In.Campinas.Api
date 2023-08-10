@@ -17,7 +17,7 @@ namespace Domain.Commands.Job.Update
         public async Task<Unit> Handle(UpdateJobRequest request, CancellationToken cancellationToken)
         {
             if (!request.IsValid())
-                throw new ArgumentException("dados invalidos");
+                throw new ArgumentException("Dados inválidos.");
 
             var jobDto = request.Adapt<JobDto>();
             await _jobRepository.UpdateAsync(jobDto.Id, jobDto);

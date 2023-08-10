@@ -8,24 +8,24 @@
 	@foreach (var job in Jobs)
 	{
 		<div class="col">
+			@* <Tooltip Title="Clique para ver mais"> *@
 			<div class="card mb-4 job-card">
-				<Tooltip Title="Clique para ver mais">
-					<a href="/vagas/@job.Id" class="job-card-link">
-						<div class="card-header">
-							<div class="row">
-								<div><b>Título da vaga: </b>@job.Title</div>
-								<div><b>Data: </b>@job.CreatedOn @job.Time</div>
-								<div><b>Local: </b>@job.Location</div>
-							</div>
+				<a href="/vagas/@job.Id" class="job-card-link">
+					<div class="card-header">
+						<div class="row">
+							<div><b>Título da vaga: </b>@job.Title</div>
+							<div><b>Data: </b>@job.CreatedOn @job.Time</div>
+							<div><b>Local: </b>@job.Location</div>
 						</div>
-						<div class="card-body">
-							<div class="row">
-								<p><b>Descrição: </b>@job.Description</p>
-							</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<p><b>Descrição: </b>@job.Description</p>
 						</div>
-					</a>
-				</Tooltip>
+					</div>
+				</a>
 			</div>
+			@* </Tooltip> *@
 		</div>
 	}
 	@* </div> *@

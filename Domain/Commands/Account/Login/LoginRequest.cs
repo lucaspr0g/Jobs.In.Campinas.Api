@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.Account.Login
 {
-    public sealed class LoginRequest : IRequest<LoginResponse>
+    public sealed class LoginRequest : IRequest<TokenResponse>
     {
         [Required]
         [EmailAddress]

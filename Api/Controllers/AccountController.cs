@@ -1,5 +1,7 @@
-﻿using Domain.Commands.Account.Create;
+﻿using Domain.Commands.Account;
+using Domain.Commands.Account.Create;
 using Domain.Commands.Account.Login;
+using Domain.Commands.Account.Refresh;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +23,7 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        [ProducesResponseType(typeof(LoginResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(TokenResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Login(LoginRequest request)
         {
@@ -37,7 +39,7 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        [ProducesResponseType(typeof(LoginResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(TokenResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Create(AccountCreateRequest request)
         {
@@ -55,5 +57,20 @@ namespace Api.Controllers
 				return BadRequest(e.Message);
 			}
         }
-    }
+
+        [HttpPost]
+		[Route("[action]")]
+        public async Task<IActionResult> Refresh(RefreshRequest request)
+        {
+            try
+            {
+                await _mediator.Send(request);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+				return BadRequest(e.Message);
+			}
+		}
+	}
 }

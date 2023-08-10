@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Domain.Commands.Account.Login
 {
-    public sealed class LoginUserCommandHandler : IRequestHandler<LoginRequest, LoginResponse>
+    public sealed class LoginUserCommandHandler : IRequestHandler<LoginRequest, TokenResponse>
     {
         private readonly IAccountService _accountService;
 
@@ -13,20 +13,20 @@ namespace Domain.Commands.Account.Login
             _accountService = accountService;
         }
 
-        public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<TokenResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
             if (!request.IsValid())
                 throw new ArgumentException("Unauthorized");
 
             var dto = request.Adapt<LoginRequestDto>();
 
-            var user = await _accountService.AuthenticateAsync(dto);
+            var (user, refreshToken) = await _accountService.AuthenticateAsync(dto);
             var token = _accountService.GenerateToken(user);
 
-            return new LoginResponse
+            return new TokenResponse
             {
-                Token = token,
-                User = new User(user.Id, user.Email, user.Name)
+                AccessToken = token,
+                RefreshToken = refreshToken
             };
         }
     }

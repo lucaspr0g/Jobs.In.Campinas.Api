@@ -5,102 +5,182 @@ using Domain.Interfaces.Services;
 using Domain.Utils;
 using Infrastructure.Repository.Collections;
 using Infrastructure.Services.Entities;
-using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace Infrastructure.Services.Handlers
 {
-    public sealed class AccountService : IAccountService
-    {
-        private const string Separator = ". ";
+	public sealed class AccountService : IAccountService
+	{
+		private const string Separator = ". ";
+		private const string Unauthorized = "Unauthorized";
 
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly TokenConfigurations _tokenConfigurations;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly TokenConfigurations _tokenConfigurations;
+		private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AccountService(
-            UserManager<ApplicationUser> userManager, 
-            SignInManager<ApplicationUser> signInManager, 
-            TokenConfigurations tokenConfigurations,
-            IHttpContextAccessor httpContextAccessor)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _tokenConfigurations = tokenConfigurations;
-            _httpContextAccessor = httpContextAccessor;
-        }
+		public AccountService(
+			UserManager<ApplicationUser> userManager,
+			SignInManager<ApplicationUser> signInManager,
+			TokenConfigurations tokenConfigurations,
+			IHttpContextAccessor httpContextAccessor)
+		{
+			_userManager = userManager;
+			_signInManager = signInManager;
+			_tokenConfigurations = tokenConfigurations;
+			_httpContextAccessor = httpContextAccessor;
+		}
 
-        public async Task<UserDto> AuthenticateAsync(LoginRequestDto request)
-        {
-            var user = await _userManager.FindByEmailAsync(request.Email) ?? 
-                throw new ArgumentException("Unauthorized");
+		public async Task<(UserDto, string)> AuthenticateAsync(LoginRequestDto request)
+		{
+			var user = await _userManager.FindByEmailAsync(request.Email) ??
+				throw new ArgumentException(Unauthorized);
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+			var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
-            if (!result.Succeeded)
-                throw new ArgumentException("Unauthorized");
+			if (!result.Succeeded)
+				throw new ArgumentException(Unauthorized);
 
-            return new UserDto(user.Id.ToString(), user.Name, user.Email!);
-        }
+			user.RefreshToken = GenerateRefreshToken();
+			user.RefreshTokenExpiryTime = DateTime.Now.AddDays(1);
 
-        public string GenerateToken(UserDto user)
-        {
-            var claims = new List<Claim>(3)
-            {
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.Email)
-            };
+			await _userManager.UpdateAsync(user);
 
-            var token = new JwtSecurityToken(
-                issuer: _tokenConfigurations.Issuer,
-                audience: _tokenConfigurations.Audience,
-                signingCredentials: new SigningCredentials(_tokenConfigurations.SecurityKey, SecurityAlgorithms.HmacSha256),
-                claims: claims,
-                notBefore: DateTime.Now,
-                expires: DateTime.Now.AddSeconds(_tokenConfigurations.Seconds)
-            );
+			return (new UserDto(user.Id.ToString(), user.Name, user.Email!), user.RefreshToken);
+		}
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+		public string GenerateToken(UserDto user)
+		{
+			var claims = GenerateUserClaims(user.Id, user.Name, user.Email);
+			var credentials = GetSigninCredentials();
+			var tokenOptions = GenerateTokenOptions(credentials, claims);
 
-        public async Task CreateAsync(AccountCreateRequest request)
-        {
-            var user = await _userManager.FindByEmailAsync(request.Email);
+			return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+		}
 
-            if (user is not null)
-                throw new Exception("Email já está cadastrado.");
+		public async Task CreateAsync(AccountCreateRequest request)
+		{
+			var user = await _userManager.FindByEmailAsync(request.Email);
 
-            user = new ApplicationUser
-            {
-                Email = request.Email,
-                UserName = request.Email,
-                Name = request.Name,
-                ConcurrencyStamp = ApplicationHelper.GenerateGuid()
-            };
+			if (user is not null)
+				throw new Exception("Email já está cadastrado.");
 
-            var result = await _userManager.CreateAsync(user, request.Password);
+			user = new ApplicationUser
+			{
+				Email = request.Email,
+				UserName = request.Email,
+				Name = request.Name,
+				ConcurrencyStamp = ApplicationHelper.GenerateGuid()
+			};
 
-            if (!result.Succeeded)
-                throw new ApplicationException(string.Join(Separator, RetrieveMessage(result)));
-        }
+			var result = await _userManager.CreateAsync(user, request.Password);
 
-        public string GetAuthenticatedUserId()
-        {
-            return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        }
+			if (!result.Succeeded)
+				throw new ApplicationException(string.Join(Separator, RetrieveMessage(result)));
+		}
 
-        private static string RetrieveMessage(IdentityResult? result)
-        {
-            if (result is null || result.Errors is null)
-                return string.Empty;
+		public string GetAuthenticatedUserId()
+		{
+			return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+		}
 
-            return string.Join(Separator, result.Errors.Select(s => s.Description));
-        }
-    }
+		public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+		{
+			var tokenValidationParameters = new TokenValidationParameters
+			{
+				ValidateAudience = true,
+				ValidateIssuer = true,
+				ValidateIssuerSigningKey = true,
+				IssuerSigningKey = _tokenConfigurations.SecurityKey,
+				ValidateLifetime = false,
+				ValidIssuer = _tokenConfigurations.Issuer,
+				ValidAudience = _tokenConfigurations.Audience
+			};
+
+			var tokenHandler = new JwtSecurityTokenHandler();
+
+			var principal = tokenHandler
+				.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+
+			var jwtSecurityToken = securityToken as JwtSecurityToken;
+
+			if (jwtSecurityToken is null ||
+				!jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+				throw new SecurityTokenException("Token inválido.");
+
+			return principal;
+		}
+
+		public async Task<(string, string)> ValidateAndUpdateRefreshToken(string email, string refreshToken)
+		{
+			var user = await _userManager.FindByEmailAsync(email);
+
+			if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+				throw new Exception("Refresh token inválido ou expirado.");
+
+			var credentials = GetSigninCredentials();
+			var claims = GenerateUserClaims(user.Id.ToString(), user.Name, user.Email!);
+			var tokenOptions = GenerateTokenOptions(credentials, claims);
+
+			var accessToken = new JwtSecurityTokenHandler()
+				.WriteToken(tokenOptions);
+
+			user.RefreshToken = GenerateRefreshToken();
+			//user.RefreshTokenExpiryTime
+
+			await _userManager.UpdateAsync(user);
+
+			return (accessToken, user.RefreshToken);
+		}
+
+		private static string GenerateRefreshToken()
+		{
+			var randomNumber = new byte[32];
+
+			using var rng = RandomNumberGenerator.Create();
+			rng.GetBytes(randomNumber);
+
+			return Convert.ToBase64String(randomNumber);
+		}
+
+		private static string RetrieveMessage(IdentityResult? result)
+		{
+			if (result is null || result.Errors is null)
+				return string.Empty;
+
+			return string.Join(Separator, result.Errors.Select(s => s.Description));
+		}
+
+		private static IEnumerable<Claim> GenerateUserClaims(string id, string name, string email)
+		{
+			return new List<Claim>(3)
+			{
+				new Claim(ClaimTypes.Name, name),
+				new Claim(ClaimTypes.NameIdentifier, id),
+				new Claim(JwtRegisteredClaimNames.UniqueName, email)
+			};
+		}
+
+		private JwtSecurityToken GenerateTokenOptions(SigningCredentials credentials, IEnumerable<Claim> claims)
+		{
+			return new JwtSecurityToken(
+				issuer: _tokenConfigurations.Issuer,
+				audience: _tokenConfigurations.Audience,
+				signingCredentials: GetSigninCredentials(),
+				claims: claims,
+				notBefore: DateTime.Now,
+				expires: DateTime.Now.AddSeconds(_tokenConfigurations.Seconds)
+			);
+		}
+
+		private SigningCredentials GetSigninCredentials()
+		{
+			return new SigningCredentials(_tokenConfigurations.SecurityKey, SecurityAlgorithms.HmacSha256);
+		}
+	}
 }

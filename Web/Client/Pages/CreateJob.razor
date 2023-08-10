@@ -1,8 +1,4 @@
 ﻿@page "/vagas/nova/"
-
-@inject IJobService JobService
-@inject NavigationManager NavigationManager
-
 @attribute [Authorize]
 
 <form>
@@ -55,13 +51,9 @@
 
 @code {
 	private CreateJobRequest CreateJobRequest = new();
-	private bool ShowErrors;
-	private string? Errors;
 
 	private async Task HandleCreate()
 	{
-		ShowErrors = false;
-
 		var (success, message) = await JobService.CreateJob(CreateJobRequest);
 
 		if (success)
@@ -70,8 +62,6 @@
 		}
 		else
 		{
-			Errors = "error";
-			ShowErrors = true;
 		}
 	}
 }

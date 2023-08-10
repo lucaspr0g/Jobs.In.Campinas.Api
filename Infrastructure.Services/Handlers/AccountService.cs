@@ -38,12 +38,12 @@ namespace Infrastructure.Services.Handlers
         public async Task<UserDto> AuthenticateAsync(LoginRequestDto request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email) ?? 
-                throw new ArgumentException("dados invalidos");
+                throw new ArgumentException("Unauthorized");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
             if (!result.Succeeded)
-                throw new ArgumentException("dados invalidos");
+                throw new ArgumentException("Unauthorized");
 
             return new UserDto(user.Id.ToString(), user.Name, user.Email!);
         }
@@ -69,12 +69,12 @@ namespace Infrastructure.Services.Handlers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<AccountCreateResponse> CreateAsync(AccountCreateRequest request)
+        public async Task CreateAsync(AccountCreateRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
 
             if (user is not null)
-                return new AccountCreateResponse(false, "usuario ja existe");
+                throw new Exception("Email já está cadastrado.");
 
             user = new ApplicationUser
             {
@@ -87,9 +87,7 @@ namespace Infrastructure.Services.Handlers
             var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
-                return new AccountCreateResponse(false, string.Join(Separator, RetrieveMessage(result)));
-
-            return new AccountCreateResponse(true, "usuario criado com sucesso");
+                throw new ApplicationException(string.Join(Separator, RetrieveMessage(result)));
         }
 
         public string GetAuthenticatedUserId()

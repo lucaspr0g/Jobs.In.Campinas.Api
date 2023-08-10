@@ -1,5 +1,4 @@
 ﻿@page "/conta"
-@inject IJobService JobService
 @attribute [Authorize]
 
 <AuthorizeView>
@@ -38,10 +37,6 @@
 </AuthorizeView>
 
 @code {
-	[Inject] protected PreloadService PreloadService { get; set; }
-
-	private bool ShowErrors;
-	private string? Errors;
 	private bool shouldRender;
 	private IEnumerable<JobResponse> Jobs = Enumerable.Empty<JobResponse>();
 

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Domain.Commands.Account.Create
 {
-    public sealed class AccountCreateCommandHandler : IRequestHandler<AccountCreateRequest, AccountCreateResponse>
+    public sealed class AccountCreateCommandHandler : IRequestHandler<AccountCreateRequest, Unit>
     {
         private readonly IAccountService _accountService;
 
@@ -12,12 +12,14 @@ namespace Domain.Commands.Account.Create
             _accountService = accountService;
         }
 
-        public async Task<AccountCreateResponse> Handle(AccountCreateRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(AccountCreateRequest request, CancellationToken cancellationToken)
         {
             if (!request.IsValid())
-                return new AccountCreateResponse(false, "dados invalidos");
+                throw new Exception("Dados inválidos.");
 
-            return await _accountService.CreateAsync(request);
+			await _accountService.CreateAsync(request);
+
+			return Unit.Value;
         }
     }
 }

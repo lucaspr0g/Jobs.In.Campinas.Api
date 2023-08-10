@@ -1,76 +1,61 @@
 ﻿@page "/cadastro"
-@inject IAuthService AuthService
-@inject NavigationManager NavigationManager
 
 <h1>Cadastrar</h1>
 
-@if (ShowErrors)
-{
-    <div class="alert alert-danger" role="alert">
-        @foreach (var error in Errors!)
-        {
-            <p>@error</p>
-        }
-    </div>
-}
-
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Please enter your details</h5>
-        <EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="form-group">
-                <label for="email">Email address</label>
-                <InputText Id="email" class="form-control" @bind-Value="RegisterModel.Email" />
-                <ValidationMessage For="@(() => RegisterModel.Email)" />
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.Password" />
-                <ValidationMessage For="@(() => RegisterModel.Password)" />
-            </div>
-            <div class="form-group">
-                <label for="password">Confirm Password</label>
-                <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.ConfirmPassword" />
-                <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </EditForm>
-    </div>
+<div class="d-flex flex-column align-items-center">
+	<div class="col-6">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">Por favor, preencha os dados</h5>
+				<EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
+					<DataAnnotationsValidator />
+					<div class="form-group mb-3">
+						<label for="email">Email</label>
+						<InputText Id="email" class="form-control" @bind-Value="RegisterModel.Email" />
+						<ValidationMessage For="@(() => RegisterModel.Email)" />
+					</div>
+					<div class="form-group mb-3">
+						<label for="password">Senha</label>
+						<InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.Password" />
+						<ValidationMessage For="@(() => RegisterModel.Password)" />
+					</div>
+					<div class="form-group mb-3">
+						<label for="password">Confirme a senha Password</label>
+						<InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.ConfirmPassword" />
+						<ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
+					</div>
+					<button type="submit" class="btn btn-primary">Cadastrar</button>
+				</EditForm>
+			</div>
+		</div>
+	</div>
 </div>
 
+
 @code {
-    [Inject] protected PreloadService PreloadService { get; set; }
+	private RegisterModel RegisterModel = new();
 
-    private RegisterModel RegisterModel = new();
-    private bool ShowErrors;
-    private string? Errors;
+	private async Task HandleRegistration()
+	{
+		try
+		{
+			PreloadService.Show(SpinnerColor.Primary);
+			var (success, message) = await AuthService.Register(RegisterModel);
 
-    private async Task HandleRegistration()
-    {
-        ShowErrors = false;
-
-        try
-        {
-            PreloadService.Show(SpinnerColor.Primary);
-            var result = await AuthService.Register(RegisterModel);
-
-            if (result.IsSuccess)
-            {
-                NavigationManager.NavigateTo("/login");
-            }
-            else
-            {
-                Errors = result.Message;
-                ShowErrors = true;
-            }
-        }
-        catch { }
-        finally
-        {
-            PreloadService.Hide();
-        }
-    }
+			if (success)
+			{
+				ToastService.Notify(new(ToastType.Success, message));
+				NavigationManager.NavigateTo("/login");
+			}
+			else
+			{
+				ToastService.Notify(new(ToastType.Danger, message));
+			}
+		}
+		catch { }
+		finally
+		{
+			PreloadService.Hide();
+		}
+	}
 }

@@ -1,34 +1,18 @@
-﻿@*<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
-*@
-
-@*@using Microsoft.AspNetCore.Components.Authorization;*@
-
-<Router AppAssembly="@typeof(Program).Assembly">
+﻿<Router AppAssembly="@typeof(Program).Assembly">
 	<Found Context="routeData">
 		<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 			<Authorizing>
-				<text>Loading...</text>
+				<text>Carregando...</text>
 			</Authorizing>
 			<NotAuthorized>
-				<text>Mulekinho espertto, vc nao ta logado</text>
+				<text>Você precisa estar logado para acessar essa página.</text>
 			</NotAuthorized>
 		</AuthorizeRouteView>
 	</Found>
 	<NotFound>
 		<CascadingAuthenticationState>
 			<LayoutView Layout="@typeof(MainLayout)">
-				<p>Sorry, there's nothing at this address.</p>
+				<p>Erro, a página não existe.</p>
 			</LayoutView>
 		</CascadingAuthenticationState>
 	</NotFound>
@@ -36,11 +20,11 @@
 
 
 @code {
-	[CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+	[CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
 	private async Task LogUserAuthenticationState()
 	{
-		var authState = await authenticationStateTask;
+		var authState = await AuthenticationStateTask;
 		var user = authState.User;
 
 		if (user.Identity!.IsAuthenticated)

@@ -1,7 +1,4 @@
 ﻿@page "/vagas/editar/{id}"
-@inject IJobService JobService
-@inject NavigationManager NavigationManager
-
 @attribute [Authorize]
 
 <div class="text-center">
@@ -27,11 +24,7 @@
     [Parameter]
     public string? Id { get; set; }
 
-    [Inject] protected PreloadService PreloadService { get; set; }
-
     private UpdateJobRequest UpdateJobRequest = new();
-    private bool ShowErrors;
-    private string? Errors;
     private bool shouldRender;
     private JobResponse Job = new();
 
@@ -45,8 +38,6 @@
 
     private async Task HandleEdit()
     {
-        ShowErrors = false;
-
         try
         {
             PreloadService.Show(SpinnerColor.Primary);
@@ -58,8 +49,6 @@
             }
             else
             {
-                Errors = message;
-                ShowErrors = true;
             }
         }
         catch { }

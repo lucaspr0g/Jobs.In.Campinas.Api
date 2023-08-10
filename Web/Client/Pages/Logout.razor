@@ -1,13 +1,18 @@
 ﻿@page "/sair"
-@inject IAuthService AuthService
-@inject NavigationManager NavigationManager
 
 @code {
-
     protected override async Task OnInitializedAsync()
     {
-        await AuthService.Logout();
-        NavigationManager.NavigateTo("/");
+        try
+        {
+            PreloadService.Show(SpinnerColor.Primary);
+            await AuthService.Logout();
+            NavigationManager.NavigateTo("/");
+        }
+        catch {}
+        finally
+        {
+            PreloadService.Hide();
+        }
     }
-
 }

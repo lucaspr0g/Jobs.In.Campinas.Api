@@ -8,7 +8,7 @@ namespace Domain.Interfaces.Services
     {
         Task<UserDto> AuthenticateAsync(LoginRequestDto request);
         string GenerateToken(UserDto user);
-        Task<AccountCreateResponse> CreateAsync(AccountCreateRequest request);
+        Task CreateAsync(AccountCreateRequest request);
         string GetAuthenticatedUserId();
     }
 }

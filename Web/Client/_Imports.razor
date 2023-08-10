@@ -15,4 +15,10 @@
 @using Web.Client.Entities.Job;
 @using Microsoft.AspNetCore.Authorization;
 @using Domain.Commands.Job.Create;
-@using BlazorBootstrap;
+
+@inject IAuthService AuthService
+@inject IJobService JobService
+
+@inject NavigationManager NavigationManager
+@inject ToastService ToastService
+@inject PreloadService PreloadService

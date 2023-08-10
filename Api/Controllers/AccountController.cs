@@ -45,10 +45,15 @@ namespace Api.Controllers
             {
                 return CreatedAtAction(nameof(Create), await _mediator.Send(request));
             }
-            catch (Exception)
-            {
-                return Unauthorized();
-            }
+			catch (ApplicationException)
+			{
+				//todo log exception
+				return BadRequest("Erro ao fazer o cadastro, tente novamente.");
+			}
+			catch (Exception e)
+			{
+				return BadRequest(e.Message);
+			}
         }
     }
 }

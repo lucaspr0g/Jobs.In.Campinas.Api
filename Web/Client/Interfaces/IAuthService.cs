@@ -4,8 +4,8 @@ namespace Web.Client.Interfaces
 {
     public interface IAuthService
     {
-        Task<RegisterResponse> Register(RegisterModel registerModel);
-        Task<LoginResponse> Login(LoginModel loginModel);
+		Task<(bool, string)> Register(RegisterModel registerModel);
+		Task<bool> Login(LoginModel loginModel);
         Task Logout();
     }
 }

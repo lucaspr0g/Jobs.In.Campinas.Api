@@ -16,7 +16,7 @@ namespace Domain.Commands.Account.Login
         public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
             if (!request.IsValid())
-                throw new ArgumentException("dados invalidos");
+                throw new ArgumentException("Unauthorized");
 
             var dto = request.Adapt<LoginRequestDto>();
 

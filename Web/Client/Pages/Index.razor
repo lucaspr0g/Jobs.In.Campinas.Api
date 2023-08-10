@@ -1,13 +1,10 @@
-﻿@inject IJobService JobService
-
-@page "/"
+﻿@page "/"
 
 <PageTitle>Index</PageTitle>
 
 <div class="d-flex flex-column align-items-center">
 	@foreach (var job in Jobs)
 	{
-		@*<di class="text-center"></di>*@
 		<div class="col-6">
 			<div class="card mb-4 job-card">
 				<a href="/vagas/@job.Id" class="job-card-link">
@@ -27,10 +24,6 @@
 </div>
 
 @code {
-	[Inject] protected PreloadService PreloadService { get; set; }
-
-	private bool ShowErrors;
-	private string? Errors;
 	private bool shouldRender;
 	private IEnumerable<JobResponse> Jobs = Enumerable.Empty<JobResponse>();
 

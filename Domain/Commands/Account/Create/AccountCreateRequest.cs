@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.Account.Create
 {
-    public sealed class AccountCreateRequest : IRequest<AccountCreateResponse>
+    public sealed class AccountCreateRequest : IRequest<Unit>
     {
         [Required]
         public string Name { get; set; } = string.Empty;

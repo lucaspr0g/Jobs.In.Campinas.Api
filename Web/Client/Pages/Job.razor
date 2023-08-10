@@ -1,5 +1,4 @@
 ﻿@page "/vagas/{id}"
-@inject IJobService JobService
 
 <div class="text-center">
     <div class="row">
@@ -29,8 +28,6 @@
 @code {
     [Parameter]
     public string? Id { get; set; }
-
-    [Inject] protected PreloadService PreloadService { get; set; }
 
     private bool shouldRender;
     private JobResponse JobResponse = new();

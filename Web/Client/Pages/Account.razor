@@ -1,6 +1,8 @@
 ﻿@page "/conta"
 @attribute [Authorize]
 
+<PageTitle>Campinas Jobs - Conta</PageTitle>
+
 <AuthorizeView>
 	<Authorized>
 		<div class="d-flex flex-row">
@@ -24,7 +26,8 @@
 								<td>@job.CreatedOn @job.Time</td>
 								<td>
 									<a href="vagas/editar/@job.Id" class="btn btn-primary">Editar</a>
-									<buttom type="buttom" class="btn btn-danger">Excluir</buttom>
+									<Button Color="ButtonColor.Danger" @onclick="@(e => ShowConfirmationAsync(job.Id!))">Excluir</Button>
+									@* <buttom type="buttom" class="btn btn-danger">Excluir</buttom> *@
 								</td>
 							</tr>
 						}
@@ -36,17 +39,24 @@
 	</Authorized>
 </AuthorizeView>
 
+<ConfirmDialog @ref="dialog" />
+
 @code {
 	private bool shouldRender;
+	private ConfirmDialog dialog;
 	private IEnumerable<JobResponse> Jobs = Enumerable.Empty<JobResponse>();
 
 	protected override bool ShouldRender() => shouldRender;
 
 	protected override async Task OnInitializedAsync()
 	{
+		await Load();
+	}
+
+	private async Task Load()
+	{
 		try
 		{
-			// Interceptor.RegisterEvent();
 			PreloadService.Show(SpinnerColor.Primary);
 			Jobs = await JobService.GetUserJobs();
 		}
@@ -58,5 +68,46 @@
 		}
 	}
 
-	// public void Dispose() => Interceptor.DisposeEvent();
+
+	private async Task ShowConfirmationAsync(string id)
+	{
+		var options = new ConfirmDialogOptions
+		{
+			YesButtonText = "Sim",
+			YesButtonColor = ButtonColor.Primary,
+			NoButtonText = "Não",
+			NoButtonColor = ButtonColor.Danger
+		};
+
+		var confirmation = await dialog.ShowAsync(
+			title: "Tem certeza que quer excluir essa vaga?",
+			message1: "O registro será excluído e não será mais possível restaurar.",
+			message2: "Deseja continuar?",
+			confirmDialogOptions: options);
+
+		if (confirmation)
+		{
+			try
+			{
+				PreloadService.Show(SpinnerColor.Primary);
+
+				var (success, message) = await JobService.DeleteJob(id);
+
+				if (success)
+				{
+					ToastService.Notify(new(ToastType.Success, message!));
+					await Load();
+				}
+				else
+				{
+					ToastService.Notify(new(ToastType.Danger, message!));
+				}
+			}
+			catch {}
+			finally
+			{
+				PreloadService.Hide();
+			}
+		}
+	}
 }

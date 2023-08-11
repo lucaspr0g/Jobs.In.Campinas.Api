@@ -1,14 +1,19 @@
 ﻿@page "/"
 
-<PageTitle>Empregos Campinas - Vagas</PageTitle>
+<PageTitle>Campinas Jobs - Vagas</PageTitle>
 
 <div class="container mt-4">
-	<h1 class="mb-3">Últimas vagas</h1>
-	@* <div class="d-flex flex-column align-items-center"> *@
+	<h1>Campinas Jobs</h1>
+	<div class="col mb-3">
+		Sua plataforma exclusiva para encontrar as melhores oportunidades de emprego na região de Campinas.
+		Conectamos talentos a empresas locais, oferecendo vagas em diversos setores. 
+		Explore as vagas disponíveis abaixo!
+	</div>
+	<hr />
+	<h1 class="mt-3 mb-3">Últimas vagas</h1>
 	@foreach (var job in Jobs)
 	{
 		<div class="col">
-			@* <Tooltip Title="Clique para ver mais"> *@
 			<div class="card mb-4 job-card">
 				<a href="/vagas/@job.Id" class="job-card-link">
 					<div class="card-header">
@@ -25,10 +30,8 @@
 					</div>
 				</a>
 			</div>
-			@* </Tooltip> *@
 		</div>
 	}
-	@* </div> *@
 </div>
 
 

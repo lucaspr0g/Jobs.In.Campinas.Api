@@ -1,51 +1,55 @@
 ﻿@page "/vagas/editar/{id}"
 @attribute [Authorize]
 
-<EditForm Model="UpdateJobRequest" OnValidSubmit="HandleEdit">
-	<DataAnnotationsValidator />
-	<input type="hidden" value="@UpdateJobRequest.Id" />
-	<InputText Id="title" class="form-control" @bind-Value="UpdateJobRequest.Title" />
-	<div class="mb-3">
-		<label for="title">Título da vaga</label>
+<PageTitle>Campinas Jobs - Editar vaga</PageTitle>
+
+<div class="container mt-4">
+	<EditForm Model="UpdateJobRequest" OnValidSubmit="HandleEdit">
+		<DataAnnotationsValidator />
+		<input type="hidden" value="@UpdateJobRequest.Id" />
 		<InputText Id="title" class="form-control" @bind-Value="UpdateJobRequest.Title" />
-		<ValidationMessage For="@(() => UpdateJobRequest.Title)" />
-	</div>
-	<div class="mb-3">
-		<label for="description">Descrição</label>
-		<InputTextArea Id="description" type="text" class="form-control" @bind-Value="UpdateJobRequest.Description" />
-		<ValidationMessage For="@(() => UpdateJobRequest.Description)" />
-	</div>
-	<div class="mb-3">
-		<label for="requirements">Requisitos</label>
-		<InputTextArea Id="requirements" type="text" class="form-control" @bind-Value="UpdateJobRequest.Requirements" />
-		<ValidationMessage For="@(() => UpdateJobRequest.Requirements)" />
-	</div>
-	<div class="mb-3">
-		<label for="contact">Contato</label>
-		<InputTextArea Id="contact" type="text" class="form-control" @bind-Value="UpdateJobRequest.Contact" />
-		<ValidationMessage For="@(() => UpdateJobRequest.Contact)" />
-	</div>
-	<div class="mb-3">
-		<div class="row">
-			<div class="col">
-				<label for="location">Local</label>
-				<InputText Id="location" type="text" class="form-control" @bind-Value="UpdateJobRequest.Location" />
-				<ValidationMessage For="@(() => UpdateJobRequest.Location)" />
-			</div>
-			<div class="col">
-				<label for="positions">Quantidade de Vagas</label>
-				<InputNumber Id="positions" class="form-control" @bind-Value="UpdateJobRequest.Positions" />
-				<ValidationMessage For="@(() => UpdateJobRequest.Positions)" />
-			</div>
-			<div class="col">
-				<label for="salary">Salário</label>
-				<InputNumber Id="salary" class="form-control" @bind-Value="UpdateJobRequest.Salary" />
-				<ValidationMessage For="@(() => UpdateJobRequest.Salary)" />
+		<div class="mb-3">
+			<label for="title">Título da vaga</label>
+			<InputText Id="title" class="form-control" @bind-Value="UpdateJobRequest.Title" />
+			<ValidationMessage For="@(() => UpdateJobRequest.Title)" />
+		</div>
+		<div class="mb-3">
+			<label for="description">Descrição</label>
+			<InputTextArea Id="description" type="text" class="form-control" @bind-Value="UpdateJobRequest.Description" />
+			<ValidationMessage For="@(() => UpdateJobRequest.Description)" />
+		</div>
+		<div class="mb-3">
+			<label for="requirements">Requisitos</label>
+			<InputTextArea Id="requirements" type="text" class="form-control" @bind-Value="UpdateJobRequest.Requirements" />
+			<ValidationMessage For="@(() => UpdateJobRequest.Requirements)" />
+		</div>
+		<div class="mb-3">
+			<label for="contact">Contato</label>
+			<InputTextArea Id="contact" type="text" class="form-control" @bind-Value="UpdateJobRequest.Contact" />
+			<ValidationMessage For="@(() => UpdateJobRequest.Contact)" />
+		</div>
+		<div class="mb-3">
+			<div class="row">
+				<div class="col">
+					<label for="location">Local</label>
+					<InputText Id="location" type="text" class="form-control" @bind-Value="UpdateJobRequest.Location" />
+					<ValidationMessage For="@(() => UpdateJobRequest.Location)" />
+				</div>
+				<div class="col">
+					<label for="positions">Quantidade de Vagas</label>
+					<InputNumber Id="positions" class="form-control" @bind-Value="UpdateJobRequest.Positions" />
+					<ValidationMessage For="@(() => UpdateJobRequest.Positions)" />
+				</div>
+				<div class="col">
+					<label for="salary">Salário</label>
+					<InputNumber Id="salary" class="form-control" @bind-Value="UpdateJobRequest.Salary" />
+					<ValidationMessage For="@(() => UpdateJobRequest.Salary)" />
+				</div>
 			</div>
 		</div>
-	</div>
-	<button type="submit" class="btn btn-primary">Salvar</button>
-</EditForm>
+		<button type="submit" class="btn btn-primary">Salvar</button>
+	</EditForm>
+</div>
 <hr />
 
 @code {
@@ -69,16 +73,16 @@
 			Job = await JobService.GetJobById(Id!);
 
 			UpdateJobRequest = new()
-			{
-				Id = Job.Id,
-				Contact = Job.Contact,
-				Description = Job.Description,
-				Location = Job.Location,
-				Positions = Job.Positions,
-				Requirements = Job.Requirements,
-				Salary = Job.Salary,
-				Title = Job.Title
-			};
+				{
+					Id = Job.Id,
+					Contact = Job.Contact,
+					Description = Job.Description,
+					Location = Job.Location,
+					Positions = Job.Positions,
+					Requirements = Job.Requirements,
+					Salary = Job.Salary,
+					Title = Job.Title
+				};
 		}
 		finally
 		{

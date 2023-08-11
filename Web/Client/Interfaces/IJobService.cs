@@ -10,5 +10,6 @@ namespace Web.Client.Interfaces
         Task<JobResponse> GetJobById(string id);
         Task<IEnumerable<JobResponse>> GetUserJobs();
 		Task<(bool, string?)> UpdateJob(UpdateJobRequest request);
+        Task<(bool, string?)> DeleteJob(string id);
     }
 }

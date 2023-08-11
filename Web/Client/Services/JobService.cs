@@ -56,7 +56,7 @@ namespace Web.Client.Services
 				.First(s => s.Type == ClaimTypes.NameIdentifier)
 				.Value;
 
-			var result = (await _httpClient.GetAsync($"api/v1/jobs/getUserJobs/{userId}"))!;
+			var result = (await _httpClient.GetAsync($"api/v1/jobs/getUserJobs"))!;
 
 			var jobs = await result
 				.Content
@@ -113,6 +113,29 @@ namespace Web.Client.Services
 			_interceptor.DisposeEvent();
 
 			return (true, default);
+		}
+
+		public async Task<(bool, string?)> DeleteJob(string id)
+		{
+			_interceptor.RegisterEvent();
+
+			var result = (await _httpClient.DeleteAsync($"api/v1/jobs/{id}"));
+
+			if (!result.IsSuccessStatusCode)
+			{
+				if (result.StatusCode == HttpStatusCode.Unauthorized)
+					return (false, "Recurso não autorizado.");
+
+				var message = await result
+					.Content
+					.ReadAsStringAsync();
+
+				return (false, message);
+			}
+
+			_interceptor.DisposeEvent();
+
+			return (true, "Vaga excluída com sucesso.");
 		}
 	}
 }

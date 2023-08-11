@@ -1,4 +1,5 @@
 ﻿@page "/vagas/{id}"
+@using System.Globalization;
 
 <PageTitle>Campinas Jobs - @JobResponse.Title</PageTitle>
 
@@ -25,7 +26,7 @@
 		<p><strong>Quantidade de vagas:</strong> @JobResponse.Positions</p>
 	</div>
 	<div class="row">
-		<p><strong>Salário:</strong> @(JobResponse.Salary is null ? "Não informado" : JobResponse.Salary.Value.ToString("c"))</p>
+		<p><strong>Salário:</strong> @(JobResponse.Salary is null ? "Não informado" : string.Format(CultureInfo.GetCultureInfo("pt-BR"), "{0:C}", JobResponse.Salary.Value))</p>
 	</div>
 </div>
 

@@ -1,13 +1,18 @@
 ﻿<AuthorizeView>
-    <Authorized>
-        <div class="nav-link">Olá, @context.User.Identity!.Name!</div>
-        <li class="nav-item"><a class="nav-link" href="/">Vagas</a></li>
-        <li class="nav-item"><a class="nav-link" href="conta">Conta</a></li>
-        <li class="nav-item"><a class="nav-link" href="sair">Sair</a></li>
-    </Authorized>
-    <NotAuthorized>
-        <li class="nav-item"><a class="nav-link" href="/">Vagas</a></li>
-        <li class="nav-item"><a class="nav-link" href="cadastro">Cadastro</a></li>
-        <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
-    </NotAuthorized>
+	<Authorized>
+		<div class="nav-link">
+			Olá, @context.User.Claims.First(s => s.Type == System.Security.Claims.ClaimTypes.Name).Value
+		</div>
+		<li class="nav-item"><a class="nav-link" href="/">Vagas</a></li>
+		<li class="nav-item"><a class="nav-link" href="conta">Conta</a></li>
+		<li class="nav-item"><a class="nav-link" href="sair">Sair</a></li>
+	</Authorized>
+	<NotAuthorized>
+		<li class="nav-item"><a class="nav-link" href="/">Vagas</a></li>
+		<li class="nav-item"><a class="nav-link" href="cadastro">Cadastro</a></li>
+		<li class="nav-item"><a class="nav-link" href="login">Login</a></li>
+	</NotAuthorized>
 </AuthorizeView>
+
+@{
+}

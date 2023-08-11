@@ -50,6 +50,11 @@
 @code {
 	private CreateJobRequest CreateJobRequest = new();
 
+	protected async override Task OnInitializedAsync()
+	{
+		// Interceptor.RegisterEvent();
+	}
+
 	private async Task HandleCreate()
 	{
 		try
@@ -72,4 +77,6 @@
 			PreloadService.Hide();
 		}
 	}
+
+	// public void Dispose() => Interceptor.DisposeEvent();
 }

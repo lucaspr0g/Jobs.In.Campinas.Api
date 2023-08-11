@@ -11,80 +11,68 @@ using Web.Client.Interfaces;
 namespace Web.Client.Services
 {
 	public sealed class JobService : IJobService
-    {
-        private readonly HttpClient _httpClient;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
+	{
+		private readonly HttpClient _httpClient;
+		private readonly HttpInterceptorService _interceptor;
+		private readonly AuthenticationStateProvider _authenticationStateProvider;
 
-        public JobService(HttpClient httpClient, AuthenticationStateProvider authenticationStateProvider)
-        {
-            _httpClient = httpClient;
-            _authenticationStateProvider = authenticationStateProvider;
-        }
+		public JobService(HttpClient httpClient, HttpInterceptorService interceptor, AuthenticationStateProvider authenticationStateProvider)
+		{
+			_httpClient = httpClient;
+			_interceptor = interceptor;
+			_authenticationStateProvider = authenticationStateProvider;
+		}
 
-        public async Task<IEnumerable<JobResponse>> GetJobs()
-        {
-            var result = (await _httpClient.GetAsync("api/v1/jobs"))!;
+		public async Task<IEnumerable<JobResponse>> GetJobs()
+		{
+			var result = (await _httpClient.GetAsync("api/v1/jobs"))!;
 
-            var jobs = await result
-                .Content
-                .ReadFromJsonAsync<IEnumerable<JobResponse>>();
+			var jobs = await result
+				.Content
+				.ReadFromJsonAsync<IEnumerable<JobResponse>>();
 
-            return jobs!;
-        }
+			return jobs!;
+		}
 
-        public async Task<JobResponse> GetJobById(string id)
-        {
-            var result = (await _httpClient.GetAsync($"api/v1/jobs/{id}"))!;
+		public async Task<JobResponse> GetJobById(string id)
+		{
+			var result = (await _httpClient.GetAsync($"api/v1/jobs/{id}"))!;
 
-            var job = await result
-                .Content
-                .ReadFromJsonAsync<JobResponse>();
+			var job = await result
+				.Content
+				.ReadFromJsonAsync<JobResponse>();
 
-            return job!;
-        }
+			return job!;
+		}
 
-        public async Task<IEnumerable<JobResponse>> GetUserJobs()
-        {
-            var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+		public async Task<IEnumerable<JobResponse>> GetUserJobs()
+		{
+			_interceptor.RegisterEvent();
 
-            var userId = authState.User
-                .Claims
-                .First(s => s.Type == ClaimTypes.NameIdentifier)
-                .Value;
+			var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
 
-            var result = (await _httpClient.GetAsync($"api/v1/jobs/getUserJobs/{userId}"))!;
+			var userId = authState.User
+				.Claims
+				.First(s => s.Type == ClaimTypes.NameIdentifier)
+				.Value;
 
-            var jobs = await result
-                .Content
-                .ReadFromJsonAsync<IEnumerable<JobResponse>>();
+			var result = (await _httpClient.GetAsync($"api/v1/jobs/getUserJobs/{userId}"))!;
 
-            return jobs!;
-        }
+			var jobs = await result
+				.Content
+				.ReadFromJsonAsync<IEnumerable<JobResponse>>();
 
-        public async Task<(bool, string?)> CreateJob(CreateJobRequest request)
-        {
-            var json = JsonSerializer.Serialize(request);
-            var result = (await _httpClient.PostAsync($"api/v1/jobs", new StringContent(json, Encoding.UTF8, "application/json")))!;
+			_interceptor.DisposeEvent();
 
-            if (!result.IsSuccessStatusCode)
-            {
-                if (result.StatusCode == HttpStatusCode.Unauthorized)
-					return (false, "Recurso não autorizado.");
+			return jobs!;
+		}
 
-				var message = await result
-                    .Content
-                    .ReadAsStringAsync();
+		public async Task<(bool, string?)> CreateJob(CreateJobRequest request)
+		{
+			_interceptor.RegisterEvent();
 
-				return (false, message);
-			}
-
-			return (true, default);
-        }
-
-        public async Task<(bool, string?)> UpdateJob(UpdateJobRequest request)
-        {
-            var json = JsonSerializer.Serialize(request);
-            var result = (await _httpClient.PatchAsync($"api/v1/jobs", new StringContent(json, Encoding.UTF8, "application/json")))!;
+			var json = JsonSerializer.Serialize(request);
+			var result = (await _httpClient.PostAsync($"api/v1/jobs", new StringContent(json, Encoding.UTF8, "application/json")))!;
 
 			if (!result.IsSuccessStatusCode)
 			{
@@ -98,7 +86,33 @@ namespace Web.Client.Services
 				return (false, message);
 			}
 
+			_interceptor.DisposeEvent();
+
 			return (true, default);
-        }
-    }
+		}
+
+		public async Task<(bool, string?)> UpdateJob(UpdateJobRequest request)
+		{
+			_interceptor.RegisterEvent();
+
+			var json = JsonSerializer.Serialize(request);
+			var result = (await _httpClient.PatchAsync($"api/v1/jobs", new StringContent(json, Encoding.UTF8, "application/json")))!;
+
+			if (!result.IsSuccessStatusCode)
+			{
+				if (result.StatusCode == HttpStatusCode.Unauthorized)
+					return (false, "Recurso não autorizado.");
+
+				var message = await result
+					.Content
+					.ReadAsStringAsync();
+
+				return (false, message);
+			}
+
+			_interceptor.DisposeEvent();
+
+			return (true, default);
+		}
+	}
 }

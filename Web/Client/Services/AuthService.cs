@@ -12,6 +12,8 @@ namespace Web.Client.Services
 {
 	public class AuthService : IAuthService
 	{
+		private const int TwoMinutes = 2;
+
 		private readonly HttpClient _httpClient;
 		private readonly AuthenticationStateProvider _authenticationStateProvider;
 		private readonly ILocalStorageService _localStorage;
@@ -49,13 +51,14 @@ namespace Web.Client.Services
 
 			var loginResponse = await response
 				.Content
-				.ReadFromJsonAsync<LoginResponse>();
+				.ReadFromJsonAsync<TokenModel>();
 
-			await _localStorage.SetItemAsync("authToken", loginResponse!.Token);
+			await _localStorage.SetItemAsync("authToken", loginResponse!.AccessToken);
+			await _localStorage.SetItemAsync("refreshToken", loginResponse!.RefreshToken);
 
 			((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email!);
 
-			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResponse.Token);
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResponse.AccessToken);
 
 			return true;
 		}
@@ -63,8 +66,56 @@ namespace Web.Client.Services
 		public async Task Logout()
 		{
 			await _localStorage.RemoveItemAsync("authToken");
+			await _localStorage.RemoveItemAsync("refreshToken");
 			((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
 			_httpClient.DefaultRequestHeaders.Authorization = null;
+		}
+
+		public async Task<string> RefreshToken()
+		{
+			var token = await _localStorage.GetItemAsync<string>("authToken");
+			var refreshToken = await _localStorage.GetItemAsync<string>("refreshToken");
+
+			var json = JsonSerializer.Serialize(new TokenModel { AccessToken = token, RefreshToken = refreshToken });
+			var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+			var result = await _httpClient.PostAsync("api/v1/account/refresh", content);
+
+			if (!result.IsSuccessStatusCode)
+				throw new ApplicationException("Something went wrong during the refresh token action");
+
+			var tokenResponse = await result
+				.Content
+				.ReadFromJsonAsync<TokenModel>();
+
+			await _localStorage.SetItemAsync("authToken", tokenResponse!.AccessToken);
+			await _localStorage.SetItemAsync("refreshToken", tokenResponse.RefreshToken);
+
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokenResponse.AccessToken);
+
+			return tokenResponse.AccessToken!;
+		}
+
+		public async Task<string?> TryRefreshToken()
+		{
+			var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+			var user = authState.User;
+
+			if (user is null)
+				return default;
+
+			var exp = user.FindFirst(s => 
+				s.Type.Equals("exp", StringComparison.Ordinal))!
+				.Value;
+
+			var expiryTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
+
+			var diff = expiryTime - DateTime.UtcNow;
+
+			if (diff.TotalMinutes <= TwoMinutes)
+				return await RefreshToken();
+
+			return default;
 		}
 	}
 }

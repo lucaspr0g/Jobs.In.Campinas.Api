@@ -64,8 +64,7 @@ namespace Api.Controllers
         {
             try
             {
-                await _mediator.Send(request);
-                return Ok();
+                return Ok(await _mediator.Send(request));
             }
             catch (Exception e)
             {

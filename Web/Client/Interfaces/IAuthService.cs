@@ -7,5 +7,7 @@ namespace Web.Client.Interfaces
 		Task<(bool, string)> Register(RegisterModel registerModel);
 		Task<bool> Login(LoginModel loginModel);
         Task Logout();
-    }
+        Task<string> RefreshToken();
+		Task<string?> TryRefreshToken();
+	}
 }

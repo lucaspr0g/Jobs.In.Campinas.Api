@@ -162,7 +162,7 @@ namespace Infrastructure.Services.Handlers
 			{
 				new Claim(ClaimTypes.Name, name),
 				new Claim(ClaimTypes.NameIdentifier, id),
-				new Claim(JwtRegisteredClaimNames.UniqueName, email)
+				new Claim(ClaimTypes.Email, email)
 			};
 		}
 

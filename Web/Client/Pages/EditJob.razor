@@ -62,7 +62,10 @@
 	{
 		try
 		{
+			// Interceptor.RegisterEvent();
+
 			PreloadService.Show(SpinnerColor.Primary);
+
 			Job = await JobService.GetJobById(Id!);
 
 			UpdateJobRequest = new()
@@ -106,4 +109,6 @@
 			PreloadService.Hide();
 		}
 	}
+
+	// public void Dispose() => Interceptor.DisposeEvent();
 }

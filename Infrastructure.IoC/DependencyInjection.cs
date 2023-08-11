@@ -36,8 +36,9 @@ namespace Infrastructure.IoC
             services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<ISmtpService, SmtpService>();
 
-            return services;
+			return services;
         }
 
         public static IServiceCollection AddSwagger(this IServiceCollection services)
@@ -79,9 +80,16 @@ namespace Infrastructure.IoC
         {
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>(configuration.GetConnectionString("Mongodb"), configuration["DatabaseName"])
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddTokenProvider<EmailConfirmationTokenProvider<ApplicationUser>>("customEmailConfirmation");
 
-            return services;
+			services.Configure<DataProtectionTokenProviderOptions>(opt =>
+	            opt.TokenLifespan = TimeSpan.FromHours(2));
+
+			services.Configure<EmailConfirmationTokenProviderOptions>(opt =>
+				opt.TokenLifespan = TimeSpan.FromDays(3));
+
+			return services;
         }
 
         public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, TokenConfigurations tokenConfigurations)
@@ -104,6 +112,12 @@ namespace Infrastructure.IoC
                         AuthenticationType = "ApplicationCookie"
                     };
                 });
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = true;
+                options.Tokens.EmailConfirmationTokenProvider = "customEmailConfirmation";
+            });
 
             return services;
         }

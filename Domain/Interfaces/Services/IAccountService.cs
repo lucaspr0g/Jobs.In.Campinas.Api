@@ -13,5 +13,6 @@ namespace Domain.Interfaces.Services
         string GetAuthenticatedUserId();
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
         Task<(string, string)> ValidateAndUpdateRefreshToken(string email, string refreshToken);
+        Task ConfirmEmailAsync(string email, string token);
 	}
 }

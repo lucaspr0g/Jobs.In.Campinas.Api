@@ -66,8 +66,6 @@
 	{
 		try
 		{
-			// Interceptor.RegisterEvent();
-
 			PreloadService.Show(SpinnerColor.Primary);
 
 			Job = await JobService.GetJobById(Id!);
@@ -113,6 +111,4 @@
 			PreloadService.Hide();
 		}
 	}
-
-	// public void Dispose() => Interceptor.DisposeEvent();
 }

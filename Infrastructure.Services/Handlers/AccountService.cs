@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Web;
 
 namespace Infrastructure.Services.Handlers
 {
@@ -23,23 +24,31 @@ namespace Infrastructure.Services.Handlers
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		private readonly TokenConfigurations _tokenConfigurations;
 		private readonly IHttpContextAccessor _httpContextAccessor;
+		private readonly ISmtpService _smtpService;
 
 		public AccountService(
 			UserManager<ApplicationUser> userManager,
 			SignInManager<ApplicationUser> signInManager,
 			TokenConfigurations tokenConfigurations,
-			IHttpContextAccessor httpContextAccessor)
+			IHttpContextAccessor httpContextAccessor,
+			ISmtpService smtpService)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
 			_tokenConfigurations = tokenConfigurations;
 			_httpContextAccessor = httpContextAccessor;
+			_smtpService = smtpService;
 		}
 
 		public async Task<(UserDto, string)> AuthenticateAsync(LoginRequestDto request)
 		{
 			var user = await _userManager.FindByEmailAsync(request.Email) ??
 				throw new ArgumentException(Unauthorized);
+
+			var emailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+
+			if (!emailConfirmed)
+				throw new InvalidOperationException("É necessário confirmar o email para fazer login.");
 
 			var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
@@ -82,6 +91,11 @@ namespace Infrastructure.Services.Handlers
 
 			if (!result.Succeeded)
 				throw new ApplicationException(string.Join(Separator, RetrieveMessage(result)));
+
+			var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+			var message = _smtpService.BuildMessage(request.Email, token);
+			_smtpService.SendEmail(message);
 		}
 
 		public string GetAuthenticatedUserId()
@@ -181,6 +195,17 @@ namespace Infrastructure.Services.Handlers
 		private SigningCredentials GetSigninCredentials()
 		{
 			return new SigningCredentials(_tokenConfigurations.SecurityKey, SecurityAlgorithms.HmacSha256);
+		}
+
+		public async Task ConfirmEmailAsync(string email, string token)
+		{
+			var user = await _userManager.FindByEmailAsync(email) ?? 
+				throw new ArgumentException("Dados de confirmação inválidos.");
+
+			var result = await _userManager.ConfirmEmailAsync(user, token);
+
+			if (!result.Succeeded)
+				throw new ArgumentException(result.Errors.FirstOrDefault()?.Description);
 		}
 	}
 }

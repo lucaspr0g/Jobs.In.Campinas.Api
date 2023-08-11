@@ -9,5 +9,6 @@ namespace Web.Client.Interfaces
         Task Logout();
         Task<string> RefreshToken();
 		Task<string?> TryRefreshToken();
+		Task<(bool, string?)> ConfirmAccount(string token, string email);
 	}
 }

@@ -4,7 +4,12 @@ namespace Web.Client.Entities.Account
 {
     public class RegisterModel
     {
-        [Required(ErrorMessage = "Digite o email.")]
+		[Required(ErrorMessage = "Digite o nome.")]
+		[StringLength(50, ErrorMessage = "O nome deve conter no mínimo {2} e no máximo {1} caracteres.", MinimumLength = 3)]
+		[Display(Name = "Name")]
+		public string? Name { get; set; }
+
+		[Required(ErrorMessage = "Digite o email.")]
         [EmailAddress(ErrorMessage = "Digite um email válido.")]
         [Display(Name = "Email")]
         public string? Email { get; set; }

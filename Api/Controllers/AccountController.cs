@@ -1,4 +1,5 @@
 ﻿using Domain.Commands.Account;
+using Domain.Commands.Account.Confirm;
 using Domain.Commands.Account.Create;
 using Domain.Commands.Account.Login;
 using Domain.Commands.Account.Refresh;
@@ -31,8 +32,12 @@ namespace Api.Controllers
             {
                 return Ok(await _mediator.Send(request));
             }
-            catch (Exception)
+            catch (InvalidOperationException e)
             {
+                return BadRequest(e.Message);
+            }
+            catch (Exception)
+			{
                 return BadRequest();
             }
         }
@@ -68,6 +73,23 @@ namespace Api.Controllers
             }
             catch (Exception e)
             {
+				return BadRequest(e.Message);
+			}
+		}
+
+		[HttpPost]
+		[ProducesResponseType((int)HttpStatusCode.NoContent)]
+		[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+		[Route("[action]")]
+		public async Task<IActionResult> Confirm(ConfirmRequest request)
+		{
+			try
+			{
+                await _mediator.Send(request);
+				return NoContent();
+			}
+			catch (Exception e)
+			{
 				return BadRequest(e.Message);
 			}
 		}

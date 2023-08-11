@@ -30,11 +30,13 @@ namespace Web.Client.Services
 
 		public async Task<(bool, string)> Register(RegisterModel registerModel)
 		{
-			var result = await _httpClient.PostAsJsonAsync("api/v1/accouunt/create", registerModel);
+			var json = JsonSerializer.Serialize(registerModel);
+			var result = await _httpClient.PostAsync("api/v1/account/create", new StringContent(json, Encoding.UTF8, "application/json"));
 
 			if (!result.IsSuccessStatusCode)
 			{
 				var message = await result.Content.ReadAsStringAsync();
+				Console.WriteLine(message);
 				return (false, message);
 			}
 
@@ -116,6 +118,20 @@ namespace Web.Client.Services
 				return await RefreshToken();
 
 			return default;
+		}
+
+		public async Task<(bool, string?)> ConfirmAccount(string token, string email)
+		{
+			var json = JsonSerializer.Serialize(new { token, email });
+			var response = await _httpClient.PostAsync("api/v1/account/confirm", new StringContent(json, Encoding.UTF8, "application/json"));
+
+			if (!response.IsSuccessStatusCode)
+			{
+				var message = await response.Content.ReadAsStringAsync();
+				return (false, message);
+			}
+
+			return (true, default);
 		}
 	}
 }

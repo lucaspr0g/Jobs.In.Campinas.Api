@@ -37,7 +37,8 @@ namespace Infrastructure.Services.Handlers
 		{
 			var client = new SmtpClient(_server, _port)
 			{
-				Credentials = new NetworkCredential(_from, _password)
+				Credentials = new NetworkCredential(_from, _password),
+				EnableSsl = true
 			};
 
 			try

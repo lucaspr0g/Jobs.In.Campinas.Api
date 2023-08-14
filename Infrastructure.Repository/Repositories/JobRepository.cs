@@ -23,6 +23,20 @@ namespace Infrastructure.Repository.Repositories
 			return jobs.Adapt<IEnumerable<JobDto>>();
 		}
 
+		public async Task<(IEnumerable<JobDto>, long)> GetAllAsync(int page, int size)
+		{
+			var totalPages = await _collection.CountDocumentsAsync(s => true) / size;
+
+			var jobs = await _collection
+				.Find(s => true)
+				.SortByDescending(s => s.CreatedOn)
+				.Skip(page * size)
+				.Limit(size)
+				.ToListAsync();
+
+			return (jobs.Adapt<IEnumerable<JobDto>>(), totalPages);
+		}
+
 		public async Task<IEnumerable<JobDto>> GetAllAsync(string userId)
 		{
 			var jobs = await _collection

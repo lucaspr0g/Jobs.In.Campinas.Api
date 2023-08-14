@@ -32,21 +32,40 @@
 			</div>
 		</div>
 	}
+
+	<Pagination ActivePageNumber="@pageNumber"
+				TotalPages="totalPages"
+				PageChanged="GetAsync"
+				NextLinkText="Próxima"
+				FirstLinkText="Primeira" 
+				PreviousLinkText="Anterior" 
+				LastLinkText="Última" />
 </div>
 
 
 @code {
 	private bool shouldRender;
-	private IEnumerable<JobResponse> Jobs = Enumerable.Empty<JobResponse>();
+	private int pageNumber = 1;
+	private int totalPages;
+
+	private IEnumerable<JobEntity> Jobs = Enumerable.Empty<JobEntity>();
 
 	protected override bool ShouldRender() => shouldRender;
 
 	protected override async Task OnInitializedAsync()
 	{
+		await GetAsync(pageNumber);
+	}
+
+	private async Task GetAsync(int newPage)
+	{
 		try
 		{
 			PreloadService.Show(SpinnerColor.Primary);
-			Jobs = await JobService.GetJobs();
+			pageNumber = newPage;
+			var response = await JobService.GetJobs(newPage);
+			Jobs = response.Jobs;
+			totalPages = response.TotalPages;
 		}
 		catch { }
 		finally

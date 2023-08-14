@@ -11,7 +11,7 @@ using System.Net;
 
 namespace Api.Controllers
 {
-	[ApiController]
+    [ApiController]
     [Authorize("Bearer")]
     [Route("api/v1/[controller]")]
     public class JobsController : ControllerBase
@@ -23,10 +23,10 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> GetJobs()
+        [HttpGet("pagination/{page}"), AllowAnonymous]
+        public async Task<IActionResult> GetJobs(int page)
         {
-            var query = new GetJobsQuery();
+            var query = new GetJobsQuery(page);
             return Ok(await _mediator.Send(query));
         }
 

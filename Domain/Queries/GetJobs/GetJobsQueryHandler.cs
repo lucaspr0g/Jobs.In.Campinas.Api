@@ -1,21 +1,27 @@
-﻿using Domain.Entities;
-using Domain.Interfaces.Repositories;
+﻿using Domain.Interfaces.Repositories;
 using MediatR;
 
 namespace Domain.Queries.GetJobs
 {
-    public sealed class GetJobsQueryHandler : IRequestHandler<GetJobsQuery, IEnumerable<JobDto>>
+    public sealed class GetJobsQueryHandler : IRequestHandler<GetJobsQuery, PaginationResponse>
     {
-        private readonly IJobRepository _jobRepository;
+		private const int PageSize = 10;
+
+		private readonly IJobRepository _jobRepository;
 
         public GetJobsQueryHandler(IJobRepository jobRepository)
         {
             _jobRepository = jobRepository;
         }
 
-        public async Task<IEnumerable<JobDto>> Handle(GetJobsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginationResponse> Handle(GetJobsQuery request, CancellationToken cancellationToken)
         {
-            return await _jobRepository.GetAllAsync();
+            request.Page = (request.Page is null || request.Page < 1) ? 
+                0 : request.Page - 1;
+
+            var (jobs, totalPages) = await _jobRepository.GetAllAsync(request.Page.Value, PageSize);
+
+            return new PaginationResponse(jobs, totalPages);
         }
     }
 }

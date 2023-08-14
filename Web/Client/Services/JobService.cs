@@ -23,29 +23,29 @@ namespace Web.Client.Services
 			_authenticationStateProvider = authenticationStateProvider;
 		}
 
-		public async Task<IEnumerable<JobResponse>> GetJobs()
+		public async Task<JobResponse> GetJobs(int page)
 		{
-			var result = (await _httpClient.GetAsync("api/v1/jobs"))!;
+			var result = (await _httpClient.GetAsync($"api/v1/jobs/pagination/{page}"))!;
 
 			var jobs = await result
 				.Content
-				.ReadFromJsonAsync<IEnumerable<JobResponse>>();
+				.ReadFromJsonAsync<JobResponse>();
 
 			return jobs!;
 		}
 
-		public async Task<JobResponse> GetJobById(string id)
+		public async Task<JobEntity> GetJobById(string id)
 		{
 			var result = (await _httpClient.GetAsync($"api/v1/jobs/{id}"))!;
 
 			var job = await result
 				.Content
-				.ReadFromJsonAsync<JobResponse>();
+				.ReadFromJsonAsync<JobEntity>();
 
 			return job!;
 		}
 
-		public async Task<IEnumerable<JobResponse>> GetUserJobs()
+		public async Task<IEnumerable<JobEntity>> GetUserJobs()
 		{
 			_interceptor.RegisterEvent();
 
@@ -60,7 +60,7 @@ namespace Web.Client.Services
 
 			var jobs = await result
 				.Content
-				.ReadFromJsonAsync<IEnumerable<JobResponse>>();
+				.ReadFromJsonAsync<IEnumerable<JobEntity>>();
 
 			_interceptor.DisposeEvent();
 

@@ -11,35 +11,48 @@
 	</div>
 	<hr />
 	<h1 class="mt-3 mb-3">Últimas vagas</h1>
-	@foreach (var job in Jobs)
+	@if (Jobs.Any())
 	{
-		<div class="col">
-			<div class="card mb-4 job-card">
-				<a href="/vagas/@job.Id" class="job-card-link">
-					<div class="card-header">
-						<div class="row">
-							<div><b>Título da vaga: </b>@job.Title</div>
-							<div><b>Data: </b>@job.CreatedOn @job.Time</div>
-							<div><b>Local: </b>@job.Location</div>
+		foreach (var job in Jobs)
+		{
+			<div class="col">
+				<div class="card mb-4 job-card">
+					<a href="/vagas/@job.Id" class="job-card-link">
+						<div class="card-header">
+							<div class="row">
+								<div><b>Título da vaga: </b>@job.Title</div>
+								<div><b>Data: </b>@job.CreatedOn @job.Time</div>
+								<div><b>Local: </b>@job.Location</div>
+							</div>
 						</div>
-					</div>
-					<div class="card-body">
-						<div class="row">
-							<p><b>Descrição: </b>@job.Description</p>
+						<div class="card-body">
+							<div class="row">
+								<p><b>Descrição: </b>@job.Description</p>
+							</div>
 						</div>
-					</div>
-				</a>
+					</a>
+				</div>
 			</div>
+		}
+	}
+	else
+	{
+		<div class="col mb-3">
+			Nenhuma vaga foi publicada no momento. Caso você seja um recrutador, crie sua conta, faça o login e publique sua vaga!
 		</div>
 	}
 
-	<Pagination ActivePageNumber="@pageNumber"
-				TotalPages="totalPages"
-				PageChanged="GetAsync"
-				NextLinkText="Próxima"
-				FirstLinkText="Primeira" 
-				PreviousLinkText="Anterior" 
-				LastLinkText="Última" />
+	@if (Jobs.Count() > 0 && totalPages > 1)
+	{
+		<Pagination ActivePageNumber="@pageNumber"
+					TotalPages="totalPages"
+					PageChanged="GetAsync"
+					NextLinkText="Próxima"
+					FirstLinkText="Primeira"
+					PreviousLinkText="Anterior"
+					LastLinkText="Última" />
+	}
+
 </div>
 
 
@@ -66,6 +79,8 @@
 			var response = await JobService.GetJobs(newPage);
 			Jobs = response.Jobs;
 			totalPages = response.TotalPages;
+
+			StateHasChanged();
 		}
 		catch { }
 		finally

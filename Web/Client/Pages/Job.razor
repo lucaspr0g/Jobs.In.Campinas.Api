@@ -1,0 +1,56 @@
+﻿@page "/vagas/{id}"
+@using System.Globalization;
+
+<PageTitle>Campinas Jobs - @JobResponse.Title</PageTitle>
+
+<div class="container mt-4">
+	<div class="row">
+		<h3>@JobResponse.Title</h3>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col">
+			<p class="text-break"><strong>Descrição da vaga:</strong> @JobResponse.Description</p>
+		</div>
+	</div>
+	<div class="row">
+		<p><strong>Requisítos:</strong> @JobResponse.Requirements</p>
+	</div>
+	<div class="row">
+		<p><strong>Contato:</strong> @JobResponse.Contact</p>
+	</div>
+	<div class="row">
+		<p><strong>Local:</strong> @JobResponse.Location</p>
+	</div>
+	<div class="row">
+		<p><strong>Quantidade de vagas:</strong> @JobResponse.Positions</p>
+	</div>
+	<div class="row">
+		<p><strong>Salário:</strong> @(JobResponse.Salary is null ? "Não informado" : string.Format(CultureInfo.GetCultureInfo("pt-BR"), "{0:C}", JobResponse.Salary.Value))</p>
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public string? Id { get; set; }
+
+	private bool shouldRender;
+	private JobEntity JobResponse = new();
+
+	protected override bool ShouldRender() => shouldRender;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			PreloadService.Show(SpinnerColor.Primary);
+			JobResponse = await JobService.GetJobById(Id!);
+		}
+		catch { }
+		finally
+		{
+			shouldRender = true;
+			PreloadService.Hide();
+		}
+	}
+}

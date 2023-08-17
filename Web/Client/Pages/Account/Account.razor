@@ -1,0 +1,113 @@
+﻿@page "/conta"
+@attribute [Authorize]
+
+<PageTitle>Campinas Jobs - Conta</PageTitle>
+
+<AuthorizeView>
+	<Authorized>
+		<div class="d-flex flex-row">
+			<div class="col-3">submenu</div>
+			<div class="col-9">
+				<h3>Minha vagas</h3>
+				<a href="vagas/nova">Nova vaga</a>
+				<table class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th scope="col">Título</th>
+							<th scope="col">Criado em</th>
+							<th scope="col">Ações</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var job in Jobs)
+						{
+							<tr>
+								<td>@job.Title</td>
+								<td>@job.CreatedOn @job.Time</td>
+								<td>
+									<a href="vagas/editar/@job.Id" class="btn btn-primary">Editar</a>
+									<Button Color="ButtonColor.Danger" @onclick="@(e => ShowConfirmationAsync(job.Id!))">Excluir</Button>
+									@* <buttom type="buttom" class="btn btn-danger">Excluir</buttom> *@
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+	</Authorized>
+</AuthorizeView>
+
+<ConfirmDialog @ref="dialog" />
+
+@code {
+	private bool shouldRender;
+	private ConfirmDialog dialog;
+	private IEnumerable<JobEntity> Jobs = Enumerable.Empty<JobEntity>();
+
+	protected override bool ShouldRender() => shouldRender;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Load();
+	}
+
+	private async Task Load()
+	{
+		try
+		{
+			PreloadService.Show(SpinnerColor.Primary);
+			Jobs = await JobService.GetUserJobs();
+		}
+		catch { }
+		finally
+		{
+			shouldRender = true;
+			PreloadService.Hide();
+		}
+	}
+
+
+	private async Task ShowConfirmationAsync(string id)
+	{
+		var options = new ConfirmDialogOptions
+		{
+			YesButtonText = "Sim",
+			YesButtonColor = ButtonColor.Primary,
+			NoButtonText = "Não",
+			NoButtonColor = ButtonColor.Danger
+		};
+
+		var confirmation = await dialog.ShowAsync(
+			title: "Tem certeza que quer excluir essa vaga?",
+			message1: "O registro será excluído e não será mais possível restaurar.",
+			message2: "Deseja continuar?",
+			confirmDialogOptions: options);
+
+		if (confirmation)
+		{
+			try
+			{
+				PreloadService.Show(SpinnerColor.Primary);
+
+				var (success, message) = await JobService.DeleteJob(id);
+
+				if (success)
+				{
+					ToastService.Notify(new(ToastType.Success, message!));
+					await Load();
+				}
+				else
+				{
+					ToastService.Notify(new(ToastType.Danger, message!));
+				}
+			}
+			catch {}
+			finally
+			{
+				PreloadService.Hide();
+			}
+		}
+	}
+}

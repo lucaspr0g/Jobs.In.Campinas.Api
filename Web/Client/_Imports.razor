@@ -1,0 +1,27 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.JSInterop
+@using Web.Client
+@using Web.Client.Shared
+@using Web.Client.Entities.Account;
+@using Web.Client.Interfaces;
+@using Microsoft.AspNetCore.Components.Authorization
+@using BlazorBootstrap;
+@using Web.Client.Entities.Job;
+@using Microsoft.AspNetCore.Authorization;
+@using Domain.Commands.Job.Create;
+@using Web.Client.Services;
+
+@inject IAuthService AuthService
+@inject IJobService JobService
+
+@inject NavigationManager NavigationManager
+@inject ToastService ToastService
+@inject PreloadService PreloadService
+
+@inject HttpInterceptorService Interceptor

@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.WebUtilities;
+
+@page "/conta/confirmar"
+
+<PageTitle>Campinas Jobs - Confirmar conta</PageTitle>
+
+<div class="container mt-4">
+	@{
+		<h1>Verificando...</h1>
+	}
+</div>
+
+@code {
+	private bool success = false;
+
+	private bool shouldRender = false;
+
+	protected override bool ShouldRender() => shouldRender;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			PreloadService.Show(SpinnerColor.Primary);
+
+			var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+			QueryHelpers.ParseQuery(uri.Query).TryGetValue("token", out var token);
+			QueryHelpers.ParseQuery(uri.Query).TryGetValue("email", out var email);
+
+			var (success, message) = await AuthService.ConfirmAccount(token.ToString(), email.ToString());
+
+			StateHasChanged();
+
+			if (success)
+			{
+				ToastService.Notify(new(ToastType.Success, "Email confirmado com sucesso! Faça o login para acessar sua conta"));
+				NavigationManager.NavigateTo("/login");
+			}
+			else
+			{
+				ToastService.Notify(new(ToastType.Danger, message!));
+			}
+		}
+		catch { }
+		finally
+		{
+			shouldRender = true;
+			PreloadService.Hide();
+		}
+	}
+}

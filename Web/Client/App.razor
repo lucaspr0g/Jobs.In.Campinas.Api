@@ -1,0 +1,39 @@
+﻿<Router AppAssembly="@typeof(Program).Assembly">
+	<Found Context="routeData">
+		<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+			<Authorizing>
+				<text>Carregando...</text>
+			</Authorizing>
+			<NotAuthorized>
+				<text>Você precisa estar logado para acessar essa página.</text>
+			</NotAuthorized>
+		</AuthorizeRouteView>
+	</Found>
+	<NotFound>
+		<CascadingAuthenticationState>
+			<LayoutView Layout="@typeof(MainLayout)">
+				<p>Erro, a página não existe.</p>
+			</LayoutView>
+		</CascadingAuthenticationState>
+	</NotFound>
+</Router>
+
+
+@code {
+	[CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+	private async Task LogUserAuthenticationState()
+	{
+		var authState = await AuthenticationStateTask;
+		var user = authState.User;
+
+		if (user.Identity!.IsAuthenticated)
+		{
+			Console.WriteLine($"User {user.Identity.Name} is authenticated.");
+		}
+		else
+		{
+			Console.WriteLine("User is NOT authenticated.");
+		}
+	}
+}

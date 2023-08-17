@@ -1,0 +1,18 @@
+﻿@page "/sair"
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            PreloadService.Show(SpinnerColor.Primary);
+            await AuthService.Logout();
+            NavigationManager.NavigateTo("/");
+        }
+        catch {}
+        finally
+        {
+            PreloadService.Hide();
+        }
+    }
+}

@@ -3,16 +3,39 @@
 		<div class="nav-link">
 			Olá, @context.User.Claims.First(s => s.Type == System.Security.Claims.ClaimTypes.Name).Value
 		</div>
-		<li class="nav-item"><a class="nav-link" href="/">Vagas</a></li>
-		<li class="nav-item"><a class="nav-link" href="conta">Conta</a></li>
-		<li class="nav-item"><a class="nav-link" href="sair">Sair</a></li>
+		<li class="nav-item">
+			<a class="nav-link" href="/">
+				<span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">Vagas</span>
+			</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="conta">
+				<span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">Conta</span>
+			</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="sair">
+				<span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">Sair</span>
+			</a>
+		</li>
 	</Authorized>
 	<NotAuthorized>
-		<li class="nav-item"><a class="nav-link" href="/">Vagas</a></li>
-		<li class="nav-item"><a class="nav-link" href="cadastro">Cadastro</a></li>
-		<li class="nav-item"><a class="nav-link" href="login">Login</a></li>
+		<li class="nav-item">
+			<a class="nav-link" href="/">
+				<span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">Vagas</span>
+			</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="cadastro">
+				<span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+					Cadastro
+				</span>
+			</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="login">
+				<span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">Login</span>
+			</a>
+		</li>
 	</NotAuthorized>
 </AuthorizeView>
-
-@{
-}

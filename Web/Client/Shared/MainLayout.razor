@@ -8,8 +8,16 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 				<Web.Client.Pages.LoginDisplay></Web.Client.Pages.LoginDisplay>
-				<li class="nav-item"><a class="nav-link" href="sobre">Sobre</a></li>
-				<li class="nav-item"><a class="nav-link" href="contato">Contato</a></li>
+				<li class="nav-item">
+					<a class="nav-link" href="sobre">
+						<span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">Sobre</span>
+					</a>
+				</li>
+				<li class="nav-item" data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">
+					<a class="nav-link" href="contato">
+						<span data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">Contato</span>
+					</a>
+				</li>
 			</ul>
 		</div>
 	</div>

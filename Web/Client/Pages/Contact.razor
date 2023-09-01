@@ -1,23 +1,63 @@
-﻿@page "/contato"
+﻿@using Web.Client.Entities.Contact;
+@inject IContactService ContactService
+
+@page "/contato"
 <PageTitle>Campinas Jobs - Contato</PageTitle>
 
 <div class="container mt-4">
     <h1>Entre em Contato</h1>
     <p>Tem alguma pergunta, sugestão ou feedback para nós? Preencha o formulário abaixo e entraremos em contato o mais breve possível.</p>
 
-    <form>
-        <div class="mb-3">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="nome" name="nome" required>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-        <div class="mb-3">
-            <label for="mensagem" class="form-label">Mensagem</label>
-            <textarea class="form-control" id="mensagem" name="mensagem" rows="4" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
-    </form>
+	<EditForm Model="ContactModel" OnValidSubmit="Send">
+		<DataAnnotationsValidator />
+		<div class="mb-3">
+			<label for="name" class="form-label">Nome</label>
+			<InputText Id="name" class="form-control" @bind-Value="ContactModel.Name" />
+			<ValidationMessage For="@(() => ContactModel.Name)" />
+		</div>
+		<div class="mb-3">
+			<label for="email" class="form-label">Email</label>
+			<InputText Id="name" class="form-control" @bind-Value="ContactModel.Email" />
+			<ValidationMessage For="@(() => ContactModel.Email)" />
+		</div>
+		<div class="mb-3">
+			<label for="subject" class="form-label">Assunto</label>
+			<InputText Id="subject" class="form-control" @bind-Value="ContactModel.Subject" />
+			<ValidationMessage For="@(() => ContactModel.Subject)" />
+		</div>
+		<div class="mb-3">
+			<label for="message" class="form-label">Mensagem</label>
+			<InputTextArea Id="name" class="form-control" @bind-Value="ContactModel.Message" />
+			<ValidationMessage For="@(() => ContactModel.Message)" />
+		</div>
+		<button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+	</EditForm>
 </div>
+
+@code {
+	private ContactModel ContactModel = new();
+
+	private async Task Send()
+	{
+		try
+		{
+			PreloadService.Show(SpinnerColor.Primary);
+			var (success, message) = await ContactService.Send(ContactModel);
+
+			if (success)
+			{
+				ToastService.Notify(new(ToastType.Success, message));
+				ContactModel.Clear();
+				StateHasChanged();
+			}
+			else
+			{
+				ToastService.Notify(new(ToastType.Danger, message));
+			}
+		}
+		finally
+		{
+			PreloadService.Hide();
+		}
+	}
+}

@@ -72,7 +72,7 @@ namespace Infrastructure.Services.Handlers
 			return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 		}
 
-		public async Task CreateAsync(AccountCreateRequest request)
+		public async Task CreateAsync(AccountCreateRequest request, CancellationToken cancellationToken)
 		{
 			var user = await _userManager.FindByEmailAsync(request.Email);
 
@@ -95,7 +95,7 @@ namespace Infrastructure.Services.Handlers
 			var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
 			var message = _smtpService.BuildMessage(request.Email, token);
-			_smtpService.SendEmail(message);
+			_smtpService.SendEmail(message, cancellationToken);
 		}
 
 		public string GetAuthenticatedUserId()

@@ -19,7 +19,7 @@ using System.Reflection;
 
 namespace Infrastructure.IoC
 {
-    public static class DependencyInjection
+	public static class DependencyInjection
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, TokenConfigurations tokenConfigurations)
         {

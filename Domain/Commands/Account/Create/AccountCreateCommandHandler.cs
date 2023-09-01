@@ -17,7 +17,7 @@ namespace Domain.Commands.Account.Create
             if (!request.IsValid())
                 throw new Exception("Dados inválidos.");
 
-			await _accountService.CreateAsync(request);
+			await _accountService.CreateAsync(request, cancellationToken);
 
 			return Unit.Value;
         }

@@ -25,6 +25,7 @@ builder.Services.AddScoped<HttpInterceptorService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJobService, JobService>();
+builder.Services.AddScoped<IContactService, ContactService>();
 
 //todo change to httpclient factory
 builder.Services.AddScoped(sp => new HttpClient 

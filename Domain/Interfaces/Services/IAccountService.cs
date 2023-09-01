@@ -9,7 +9,7 @@ namespace Domain.Interfaces.Services
     {
 		Task<(UserDto, string)> AuthenticateAsync(LoginRequestDto request);
         string GenerateToken(UserDto user);
-        Task CreateAsync(AccountCreateRequest request);
+        Task CreateAsync(AccountCreateRequest request, CancellationToken cancellationToken);
         string GetAuthenticatedUserId();
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
         Task<(string, string)> ValidateAndUpdateRefreshToken(string email, string refreshToken);
